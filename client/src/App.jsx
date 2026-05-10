@@ -1,20 +1,67 @@
+import { useState } from "react";
+
 import InputTodo from "./components/InputTodo";
 import ListTodos from "./components/ListTodos";
 
 import "./App.css";
 
 function App() {
+  const [page, setPage] = useState("dashboard");
+
   return (
-    <main className="container py-5">
-      <h1 className="text-center mb-5 display-3 fw-bold">
-        PERN Todo List
-      </h1>
+    <main>
 
-      <InputTodo />
+      <h1>GST Buku Job Order</h1>
 
-      <div className="mt-5">
-        <ListTodos />
-      </div>
+      <ul className="navbar">
+
+        <li
+          onClick={() => setPage("dashboard")}
+          className={page === "dashboard" ? "active" : ""}
+        >
+          Dashboard
+        </li>
+
+        <li
+          onClick={() => setPage("export")}
+          className={page === "export" ? "active" : ""}
+        >
+          Export
+        </li>
+
+        <li
+          onClick={() => setPage("import")}
+          className={page === "import" ? "active" : ""}
+        >
+          Import
+        </li>
+
+        <li
+          onClick={() => setPage("domestic")}
+          className={page === "domestic" ? "active" : ""}
+        >
+          Domestic
+        </li>
+
+        <li
+          onClick={() => setPage("form")}
+          className={page === "form" ? "active" : ""}
+        >
+          Create JO
+        </li>
+
+      </ul>
+
+      {page === "dashboard" && <ListTodos type="ALL" />}
+
+      {page === "export" && <ListTodos type="EXPORT" />}
+
+      {page === "import" && <ListTodos type="IMPORT" />}
+
+      {page === "domestic" && <ListTodos type="DOMESTIC" />}
+
+      {page === "form" && <InputTodo />}
+
     </main>
   );
 }
