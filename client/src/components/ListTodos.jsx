@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../config';
 import { useEffect, useState } from "react";
 
 const ListTodos = ({ type }) => {
@@ -36,7 +37,7 @@ const ListTodos = ({ type }) => {
         params.append("order", sortOrder);
       }
       
-      const url = `http://localhost:5000/job_orders${params.toString() ? `?${params.toString()}` : ""}`;
+      const url = `${API_BASE_URL}/job_orders${params.toString() ? `?${params.toString()}` : ""}`;
       const response = await fetch(url);
       const jsonData = await response.json();
       setJobOrders(jsonData);
@@ -49,7 +50,7 @@ const ListTodos = ({ type }) => {
 
   const getYears = async () => {
     try {
-      const response = await fetch("http://localhost:5000/job_orders/years");
+      const response = await fetch(`${API_BASE_URL}/job_orders/years`);
       const years = await response.json();
       setAvailableYears(years);
     } catch (error) {
@@ -64,7 +65,7 @@ const ListTodos = ({ type }) => {
 
   const deleteJobOrder = async (id) => {
     try {
-      await fetch(`http://localhost:5000/job_orders/${id}`, {
+      await fetch(`${API_BASE_URL}/job_orders/${id}`, {
         method: "DELETE",
       });
       getJobOrders();
@@ -82,7 +83,7 @@ const ListTodos = ({ type }) => {
 
   const updateJobOrder = async () => {
     try {
-      await fetch(`http://localhost:5000/job_orders/${editingJob.job_order_id}`, {
+      await fetch(`${API_BASE_URL}/job_orders/${editingJob.job_order_id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

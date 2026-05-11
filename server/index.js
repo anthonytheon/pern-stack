@@ -2,9 +2,10 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const pool = require("./db");
+const path = require('path');
+const fs = require('fs');
 
 // middleware
-
 app.use(cors());
 app.use(express.json());
 
@@ -142,7 +143,6 @@ app.post("/job_orders", async (req, res) => {
 
 app.get("/job_orders", async (req, res) => {
   try {
-    // Get query parameters
     const {
       search = "",
       searchField = "all",
@@ -157,19 +157,16 @@ app.get("/job_orders", async (req, res) => {
     let paramCounter = 1;
     const whereConditions = [];
 
-    // Filter by JO type if specified
     if (type && type !== "ALL") {
       whereConditions.push(`jo_type = $${paramCounter}`);
       queryParams.push(type);
       paramCounter++;
     }
 
-    // Search functionality
     if (search && search.trim() !== "") {
       const searchTerm = `%${search.toLowerCase()}%`;
       
       if (searchField === "all") {
-        // Search across multiple fields
         whereConditions.push(`
           (
             LOWER(aju_number) LIKE $${paramCounter} OR
@@ -179,13 +176,11 @@ app.get("/job_orders", async (req, res) => {
             LOWER(volume) LIKE $${paramCounter + 4}
           )
         `);
-        // Push the same search term 5 times for each field
         for (let i = 0; i < 5; i++) {
           queryParams.push(searchTerm);
         }
         paramCounter += 5;
       } else {
-        // Search in specific field
         const validFields = ["aju_number", "jo_number", "shipper_name", "consignee_name", "volume"];
         if (validFields.includes(searchField)) {
           whereConditions.push(`LOWER(${searchField}) LIKE $${paramCounter}`);
@@ -195,7 +190,6 @@ app.get("/job_orders", async (req, res) => {
       }
     }
 
-    // Year filter (checks ETA, ETD, and SPPB date)
     if (year && year !== "") {
       whereConditions.push(`
         (
@@ -208,12 +202,10 @@ app.get("/job_orders", async (req, res) => {
       paramCounter++;
     }
 
-    // Add WHERE clause if conditions exist
     if (whereConditions.length > 0) {
       query += " WHERE " + whereConditions.join(" AND ");
     }
 
-    // Sorting - validate sort field to prevent SQL injection
     const validSortFields = [
       "job_order_id", "jo_number", "jo_type", "shipper_name", 
       "consignee_name", "volume", "eta", "etd", "loading_date",
@@ -230,7 +222,6 @@ app.get("/job_orders", async (req, res) => {
     console.log("With params:", queryParams);
 
     const allJobOrders = await pool.query(query, queryParams);
-
     res.json(allJobOrders.rows);
 
   } catch (error) {
@@ -406,6 +397,67 @@ app.delete("/job_orders/:id", async (req, res) => {
   }
 });
 
-app.listen(5000, () => {
-  console.log("Server is running on port 5000");
+// =========================
+// SERVE STATIC FILES (REACT VITE BUILD) - FIXED VERSION
+// =========================
+
+// Use 'dist' folder (Vite default)
+const distPath = path.join(__dirname, 'dist');
+
+if (fs.existsSync(distPath)) {
+  console.log('✓ Serving React frontend from:', distPath);
+  
+  // Serve static files first
+  app.use(express.static(distPath));
+  
+  // For client-side routing - serve index.html for any non-API request
+  // Using a middleware function instead of app.get('*')
+  app.use((req, res, next) => {
+    // Skip API routes
+    if (req.path.startsWith('/job_orders')) {
+      return next();
+    }
+    // Send index.html for all other routes
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+  
+} else {
+  console.log('⚠ Warning: dist folder not found at:', distPath);
+  console.log('Please run "npm run build" in your frontend folder and copy the "dist" folder here');
+  app.get('/', (req, res) => {
+    res.send('Backend is running! But frontend build not found. Run "npm run build" first.');
+  });
+}
+
+// Helper function to get local IP address
+function getLocalIp() {
+  const { networkInterfaces } = require('os');
+  const nets = networkInterfaces();
+  
+  for (const name of Object.keys(nets)) {
+    for (const net of nets[name]) {
+      if (net.family === 'IPv4' && !net.internal) {
+        return net.address;
+      }
+    }
+  }
+  return 'localhost';
+}
+
+// =========================
+// START SERVER
+// =========================
+const PORT = 5000;
+const localIp = getLocalIp();
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`========================================`);
+  console.log(`✅ GST Job Order Server Running!`);
+  console.log(`========================================`);
+  console.log(`📍 Local access:    http://localhost:${PORT}`);
+  console.log(`📍 Network access:  http://${localIp}:${PORT}`);
+  console.log(`========================================`);
+  console.log(`📱 Share this URL with employees:`);
+  console.log(`   http://${localIp}:${PORT}`);
+  console.log(`========================================`);
 });
