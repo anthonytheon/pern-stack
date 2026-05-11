@@ -1,5 +1,8 @@
 import { useState } from "react";
 
+// HARDCODED API URL - CHANGE THIS IF YOUR IP CHANGES
+const API_BASE_URL = 'http://192.168.100.36:5000';
+
 const InputTodo = () => {
   const [joType, setJoType] = useState("");
 
@@ -40,7 +43,8 @@ const InputTodo = () => {
         ...formData,
       };
 
-      await fetch("http://localhost:5000/job_orders", {
+      // CHANGED: localhost to API_BASE_URL
+      await fetch(`${API_BASE_URL}/job_orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

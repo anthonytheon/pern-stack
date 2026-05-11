@@ -1,4 +1,6 @@
-import { API_BASE_URL } from '../config';
+// HARDCODED API URL - CHANGE THIS IF YOUR IP CHANGES
+const API_BASE_URL = 'http://192.168.100.36:5000';
+
 import { useEffect, useState } from "react";
 
 const ListTodos = ({ type }) => {
