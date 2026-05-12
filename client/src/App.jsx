@@ -11,8 +11,6 @@ function App() {
   return (
     <main>
 
-      <h1>GST Buku Job Order</h1>
-
       <ul className="navbar">
 
         <li

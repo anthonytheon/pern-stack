@@ -7,6 +7,8 @@ const ListTodos = ({ type }) => {
   const [jobOrders, setJobOrders] = useState([]);
   const [editingJob, setEditingJob] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [jobToDelete, setJobToDelete] = useState(null);
   
   // Search/filter states
   const [searchTerm, setSearchTerm] = useState("");
@@ -65,15 +67,29 @@ const ListTodos = ({ type }) => {
     getYears();
   }, [type, searchTerm, searchField, selectedYear, sortField, sortOrder]);
 
-  const deleteJobOrder = async (id) => {
+  const confirmDelete = (job) => {
+    setJobToDelete(job);
+    setShowDeleteModal(true);
+  };
+
+  const handleDelete = async () => {
+    if (!jobToDelete) return;
+    
     try {
-      await fetch(`${API_BASE_URL}/job_orders/${id}`, {
+      await fetch(`${API_BASE_URL}/job_orders/${jobToDelete.job_order_id}`, {
         method: "DELETE",
       });
+      setShowDeleteModal(false);
+      setJobToDelete(null);
       getJobOrders();
     } catch (error) {
       console.error(error.message);
     }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setJobToDelete(null);
   };
 
   const updateField = (e) => {
@@ -126,17 +142,12 @@ const ListTodos = ({ type }) => {
   };
 
   const renderHeaders = () => {
+    // EXPORT Dashboard
     if (type === "EXPORT") {
       return (
         <>
           <th onClick={() => handleSort("loading_date")} style={{ cursor: "pointer" }}>
             Loading Date {sortField === "loading_date" && (sortOrder === "ASC" ? "↑" : "↓")}
-          </th>
-          <th onClick={() => handleSort("etd")} style={{ cursor: "pointer" }}>
-            ETD {sortField === "etd" && (sortOrder === "ASC" ? "↑" : "↓")}
-          </th>
-          <th onClick={() => handleSort("eta")} style={{ cursor: "pointer" }}>
-            ETA {sortField === "eta" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
           <th onClick={() => handleSort("shipper_name")} style={{ cursor: "pointer" }}>
             Shipper Name {sortField === "shipper_name" && (sortOrder === "ASC" ? "↑" : "↓")}
@@ -144,27 +155,37 @@ const ListTodos = ({ type }) => {
           <th onClick={() => handleSort("volume")} style={{ cursor: "pointer" }}>
             Volume {sortField === "volume" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
-          <th onClick={() => handleSort("port_of_discharge")} style={{ cursor: "pointer" }}>
-            Port of Discharge {sortField === "port_of_discharge" && (sortOrder === "ASC" ? "↑" : "↓")}
+          <th onClick={() => handleSort("port_of_loading")} style={{ cursor: "pointer" }}>
+            Port of Loading {sortField === "port_of_loading" && (sortOrder === "ASC" ? "↑" : "↓")}
+          </th>
+          <th onClick={() => handleSort("aju_number")} style={{ cursor: "pointer" }}>
+            AJU Number {sortField === "aju_number" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
         </>
       );
     }
     
+    // IMPORT Dashboard
     if (type === "IMPORT") {
       return (
         <>
-          <th onClick={() => handleSort("eta")} style={{ cursor: "pointer" }}>
-            ETA {sortField === "eta" && (sortOrder === "ASC" ? "↑" : "↓")}
-          </th>
           <th onClick={() => handleSort("consignee_name")} style={{ cursor: "pointer" }}>
             Consignee Name {sortField === "consignee_name" && (sortOrder === "ASC" ? "↑" : "↓")}
+          </th>
+          <th onClick={() => handleSort("aju_number")} style={{ cursor: "pointer" }}>
+            AJU Number {sortField === "aju_number" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
           <th onClick={() => handleSort("volume")} style={{ cursor: "pointer" }}>
             Volume {sortField === "volume" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
-          <th onClick={() => handleSort("aju_number")} style={{ cursor: "pointer" }}>
-            AJU Number {sortField === "aju_number" && (sortOrder === "ASC" ? "↑" : "↓")}
+          <th onClick={() => handleSort("port_of_discharge")} style={{ cursor: "pointer" }}>
+            Port of Discharge {sortField === "port_of_discharge" && (sortOrder === "ASC" ? "↑" : "↓")}
+          </th>
+          <th onClick={() => handleSort("etd")} style={{ cursor: "pointer" }}>
+            ETD {sortField === "etd" && (sortOrder === "ASC" ? "↑" : "↓")}
+          </th>
+          <th onClick={() => handleSort("eta")} style={{ cursor: "pointer" }}>
+            ETA {sortField === "eta" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
           <th onClick={() => handleSort("sppb_date")} style={{ cursor: "pointer" }}>
             SPPB Date {sortField === "sppb_date" && (sortOrder === "ASC" ? "↑" : "↓")}
@@ -176,17 +197,12 @@ const ListTodos = ({ type }) => {
       );
     }
     
+    // DOMESTIC Dashboard
     if (type === "DOMESTIC") {
       return (
         <>
           <th onClick={() => handleSort("loading_date")} style={{ cursor: "pointer" }}>
             Loading Date {sortField === "loading_date" && (sortOrder === "ASC" ? "↑" : "↓")}
-          </th>
-          <th onClick={() => handleSort("etd")} style={{ cursor: "pointer" }}>
-            ETD {sortField === "etd" && (sortOrder === "ASC" ? "↑" : "↓")}
-          </th>
-          <th onClick={() => handleSort("eta")} style={{ cursor: "pointer" }}>
-            ETA {sortField === "eta" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
           <th onClick={() => handleSort("shipper_name")} style={{ cursor: "pointer" }}>
             Shipper Name {sortField === "shipper_name" && (sortOrder === "ASC" ? "↑" : "↓")}
@@ -194,44 +210,48 @@ const ListTodos = ({ type }) => {
           <th onClick={() => handleSort("volume")} style={{ cursor: "pointer" }}>
             Volume {sortField === "volume" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
-          <th onClick={() => handleSort("port_of_discharge")} style={{ cursor: "pointer" }}>
-            Port of Discharge {sortField === "port_of_discharge" && (sortOrder === "ASC" ? "↑" : "↓")}
+          <th onClick={() => handleSort("port_of_loading")} style={{ cursor: "pointer" }}>
+            Port of Loading {sortField === "port_of_loading" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
         </>
       );
     }
     
+    // ALL Dashboard - NO SPPB Date and NO Dooring Date
     return (
       <>
+        <th onClick={() => handleSort("jo_number")} style={{ cursor: "pointer" }}>
+          JO Number {sortField === "jo_number" && (sortOrder === "ASC" ? "↑" : "↓")}
+        </th>
+        <th onClick={() => handleSort("jo_type")} style={{ cursor: "pointer" }}>
+          Type {sortField === "jo_type" && (sortOrder === "ASC" ? "↑" : "↓")}
+        </th>
         <th onClick={() => handleSort("loading_date")} style={{ cursor: "pointer" }}>
           Loading Date {sortField === "loading_date" && (sortOrder === "ASC" ? "↑" : "↓")}
+        </th>
+        <th onClick={() => handleSort("shipper_name")} style={{ cursor: "pointer" }}>
+          Shipper Name {sortField === "shipper_name" && (sortOrder === "ASC" ? "↑" : "↓")}
+        </th>
+        <th onClick={() => handleSort("aju_number")} style={{ cursor: "pointer" }}>
+          AJU Number {sortField === "aju_number" && (sortOrder === "ASC" ? "↑" : "↓")}
+        </th>
+        <th onClick={() => handleSort("volume")} style={{ cursor: "pointer" }}>
+          Volume {sortField === "volume" && (sortOrder === "ASC" ? "↑" : "↓")}
+        </th>
+        <th onClick={() => handleSort("port_of_loading")} style={{ cursor: "pointer" }}>
+          Port of Loading {sortField === "port_of_loading" && (sortOrder === "ASC" ? "↑" : "↓")}
+        </th>
+        <th onClick={() => handleSort("consignee_name")} style={{ cursor: "pointer" }}>
+          Consignee Name {sortField === "consignee_name" && (sortOrder === "ASC" ? "↑" : "↓")}
+        </th>
+        <th onClick={() => handleSort("port_of_discharge")} style={{ cursor: "pointer" }}>
+          Port of Discharge {sortField === "port_of_discharge" && (sortOrder === "ASC" ? "↑" : "↓")}
         </th>
         <th onClick={() => handleSort("etd")} style={{ cursor: "pointer" }}>
           ETD {sortField === "etd" && (sortOrder === "ASC" ? "↑" : "↓")}
         </th>
         <th onClick={() => handleSort("eta")} style={{ cursor: "pointer" }}>
           ETA {sortField === "eta" && (sortOrder === "ASC" ? "↑" : "↓")}
-        </th>
-        <th onClick={() => handleSort("shipper_name")} style={{ cursor: "pointer" }}>
-          Shipper Name {sortField === "shipper_name" && (sortOrder === "ASC" ? "↑" : "↓")}
-        </th>
-        <th onClick={() => handleSort("volume")} style={{ cursor: "pointer" }}>
-          Volume {sortField === "volume" && (sortOrder === "ASC" ? "↑" : "↓")}
-        </th>
-        <th onClick={() => handleSort("port_of_discharge")} style={{ cursor: "pointer" }}>
-          Port of Discharge {sortField === "port_of_discharge" && (sortOrder === "ASC" ? "↑" : "↓")}
-        </th>
-        <th onClick={() => handleSort("consignee_name")} style={{ cursor: "pointer" }}>
-          Consignee Name {sortField === "consignee_name" && (sortOrder === "ASC" ? "↑" : "↓")}
-        </th>
-        <th onClick={() => handleSort("aju_number")} style={{ cursor: "pointer" }}>
-          AJU Number {sortField === "aju_number" && (sortOrder === "ASC" ? "↑" : "↓")}
-        </th>
-        <th onClick={() => handleSort("sppb_date")} style={{ cursor: "pointer" }}>
-          SPPB Date {sortField === "sppb_date" && (sortOrder === "ASC" ? "↑" : "↓")}
-        </th>
-        <th onClick={() => handleSort("dooring_date")} style={{ cursor: "pointer" }}>
-          Dooring Date {sortField === "dooring_date" && (sortOrder === "ASC" ? "↑" : "↓")}
         </th>
         <th>Edit</th>
         <th>Delete</th>
@@ -240,64 +260,68 @@ const ListTodos = ({ type }) => {
   };
 
   const renderRowData = (job) => {
+    // EXPORT Dashboard
     if (type === "EXPORT") {
       return (
         <>
           <td>{formatDate(job.loading_date)}</td>
-          <td>{formatDate(job.etd)}</td>
-          <td>{formatDate(job.eta)}</td>
           <td>{job.shipper_name}</td>
           <td>{job.volume}</td>
-          <td>{job.port_of_discharge}</td>
+          <td>{job.port_of_loading}</td>
+          <td>{job.aju_number}</td>
         </>
       );
     }
     
+    // IMPORT Dashboard
     if (type === "IMPORT") {
       return (
         <>
-          <td>{formatDate(job.eta)}</td>
           <td>{job.consignee_name}</td>
-          <td>{job.volume}</td>
           <td>{job.aju_number}</td>
+          <td>{job.volume}</td>
+          <td>{job.port_of_discharge}</td>
+          <td>{formatDate(job.etd)}</td>
+          <td>{formatDate(job.eta)}</td>
           <td>{formatDate(job.sppb_date)}</td>
           <td>{formatDate(job.dooring_date)}</td>
         </>
       );
     }
     
+    // DOMESTIC Dashboard
     if (type === "DOMESTIC") {
       return (
         <>
           <td>{formatDate(job.loading_date)}</td>
-          <td>{formatDate(job.etd)}</td>
-          <td>{formatDate(job.eta)}</td>
           <td>{job.shipper_name}</td>
           <td>{job.volume}</td>
-          <td>{job.port_of_discharge}</td>
+          <td>{job.port_of_loading}</td>
         </>
       );
     }
     
+    // ALL Dashboard - NO SPPB Date and NO Dooring Date
     return (
       <>
+        <td>{job.jo_number}</td>
+        <td>{job.jo_type}</td>
         <td>{formatDate(job.loading_date)}</td>
+        <td>{job.shipper_name}</td>
+        <td>{job.aju_number}</td>
+        <td>{job.volume}</td>
+        <td>{job.port_of_loading}</td>
+        <td>{job.consignee_name}</td>
+        <td>{job.port_of_discharge}</td>
         <td>{formatDate(job.etd)}</td>
         <td>{formatDate(job.eta)}</td>
-        <td>{job.shipper_name}</td>
-        <td>{job.volume}</td>
-        <td>{job.port_of_discharge}</td>
-        <td>{job.consignee_name}</td>
-        <td>{job.aju_number}</td>
-        <td>{formatDate(job.sppb_date)}</td>
-        <td>{formatDate(job.dooring_date)}</td>
         <td className="action-cell">
           <button className="edit-btn" onClick={() => setEditingJob(job)}>
             Edit
           </button>
         </td>
         <td className="action-cell">
-          <button className="delete-btn" onClick={() => deleteJobOrder(job.job_order_id)}>
+          <button className="delete-btn" onClick={() => confirmDelete(job)}>
             Delete
           </button>
         </td>
@@ -374,12 +398,6 @@ const ListTodos = ({ type }) => {
         <table className="data-table">
           <thead>
             <tr>
-              <th onClick={() => handleSort("jo_number")} style={{ cursor: "pointer" }}>
-                JO Number {sortField === "jo_number" && (sortOrder === "ASC" ? "↑" : "↓")}
-              </th>
-              <th onClick={() => handleSort("jo_type")} style={{ cursor: "pointer" }}>
-                Type {sortField === "jo_type" && (sortOrder === "ASC" ? "↑" : "↓")}
-              </th>
               {renderHeaders()}
             </tr>
           </thead>
@@ -391,13 +409,13 @@ const ListTodos = ({ type }) => {
                   Loading...
                 </td>
               </tr>
-            ) : jobOrders.map((job) => (
-              <tr key={job.job_order_id}>
-                <td>{job.jo_number}</td>
-                <td>{job.jo_type}</td>
-                {renderRowData(job)}
-              </tr>
-            ))}
+            ) : (
+              jobOrders.map((job) => (
+                <tr key={job.job_order_id}>
+                  {renderRowData(job)}
+                </tr>
+              ))
+            )}
             {!loading && jobOrders.length === 0 && (
               <tr>
                 <td colSpan="100%" className="no-results">
@@ -408,6 +426,35 @@ const ListTodos = ({ type }) => {
           </tbody>
         </table>
       </div>
+
+      {/* DELETE CONFIRMATION MODAL - FIXED */}
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={cancelDelete}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="#ff385c" strokeWidth="1.5"/>
+                <path d="M12 8V12M12 16H12.01" stroke="#ff385c" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
+            </div>
+            <h3 className="modal-title">Delete Job Order</h3>
+            <p className="modal-message">
+              Are you sure you want to delete <strong>{jobToDelete?.jo_number}</strong>?
+            </p>
+            <p className="modal-warning">
+              This action cannot be undone.
+            </p>
+            <div className="modal-buttons">
+              <button className="modal-cancel-btn" onClick={cancelDelete}>
+                Cancel
+              </button>
+              <button className="modal-delete-btn" onClick={handleDelete}>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {editingJob && (
         <div className="edit-form">
