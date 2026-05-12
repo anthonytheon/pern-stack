@@ -16,12 +16,12 @@ const InputTodo = () => {
     port_of_loading: "",
     port_of_discharge: "",
     person_in_charge: "",
+    aju_number: "",
     eta: "",
     etd: "",
     goods: "",
     loading_date: "",
     closing_date: "",
-    aju_number: "",
     sppb_date: "",
     dooring_date: "",
     extra_note: "",
@@ -43,7 +43,6 @@ const InputTodo = () => {
         ...formData,
       };
 
-      // CHANGED: localhost to API_BASE_URL
       await fetch(`${API_BASE_URL}/job_orders`, {
         method: "POST",
         headers: {
@@ -57,6 +56,87 @@ const InputTodo = () => {
     } catch (error) {
       console.error(error.message);
     }
+  };
+
+  // Render date fields based on JO type
+  const renderDateFields = () => {
+    if (joType === "IMPORT") {
+      return (
+        <>
+          <label>ETD (Overseas from Indonesia)</label>
+          <input
+            type="date"
+            name="etd"
+            value={formData.etd}
+            onChange={onChange}
+          />
+
+          <label>ETA (Arrival in Indonesia, Surabaya)</label>
+          <input
+            type="date"
+            name="eta"
+            value={formData.eta}
+            onChange={onChange}
+          />
+
+          <label>SPPB Date</label>
+          <input
+            type="date"
+            name="sppb_date"
+            value={formData.sppb_date}
+            onChange={onChange}
+          />
+
+          <label>Dooring Date</label>
+          <input
+            type="date"
+            name="dooring_date"
+            value={formData.dooring_date}
+            onChange={onChange}
+          />
+        </>
+      );
+    }
+
+    if (joType === "EXPORT" || joType === "DOMESTIC") {
+      return (
+        <>
+          <label>Loading Date</label>
+          <input
+            type="date"
+            name="loading_date"
+            value={formData.loading_date}
+            onChange={onChange}
+          />
+
+          <label>Closing Date</label>
+          <input
+            type="date"
+            name="closing_date"
+            value={formData.closing_date}
+            onChange={onChange}
+          />
+
+          <label>ETD (Departure date from Surabaya, Indonesia)</label>
+          <input
+            type="date"
+            name="etd"
+            value={formData.etd}
+            onChange={onChange}
+          />
+
+          <label>ETA (Arrival date at destination)</label>
+          <input
+            type="date"
+            name="eta"
+            value={formData.eta}
+            onChange={onChange}
+          />
+        </>
+      );
+    }
+
+    return null;
   };
 
   return (
@@ -164,95 +244,23 @@ const InputTodo = () => {
               onChange={onChange}
             />
 
+            <input
+              type="text"
+              name="aju_number"
+              placeholder="AJU Number"
+              value={formData.aju_number}
+              onChange={onChange}
+            />
+
           </div>
 
-          {/* DATE FIELDS */}
+          {/* DATE FIELDS - ORDERED BY JO TYPE */}
 
           <h3>Dates</h3>
 
           <div className="form-section">
-
-            <label>ETA</label>
-            <input
-              type="date"
-              name="eta"
-              value={formData.eta}
-              onChange={onChange}
-            />
-
-            <label>ETD</label>
-            <input
-              type="date"
-              name="etd"
-              value={formData.etd}
-              onChange={onChange}
-            />
-
-            {/* EXPORT + DOMESTIC */}
-
-            {(joType === "EXPORT" || joType === "DOMESTIC") && (
-              <>
-                <label>Loading Date</label>
-                <input
-                  type="date"
-                  name="loading_date"
-                  value={formData.loading_date}
-                  onChange={onChange}
-                />
-
-                <label>Closing Date</label>
-                <input
-                  type="date"
-                  name="closing_date"
-                  value={formData.closing_date}
-                  onChange={onChange}
-                />
-              </>
-            )}
-
-            {/* IMPORT */}
-
-            {joType === "IMPORT" && (
-              <>
-                <label>SPPB Date</label>
-                <input
-                  type="date"
-                  name="sppb_date"
-                  value={formData.sppb_date}
-                  onChange={onChange}
-                />
-
-                <label>Dooring Date</label>
-                <input
-                  type="date"
-                  name="dooring_date"
-                  value={formData.dooring_date}
-                  onChange={onChange}
-                />
-              </>
-            )}
-
+            {renderDateFields()}
           </div>
-
-          {/* IMPORT ONLY */}
-
-          {joType === "IMPORT" && (
-            <>
-              <h3>Import Information</h3>
-
-              <div className="form-section">
-
-                <input
-                  type="text"
-                  name="aju_number"
-                  placeholder="AJU Number"
-                  value={formData.aju_number}
-                  onChange={onChange}
-                />
-
-              </div>
-            </>
-          )}
 
           {/* TEXT */}
 
