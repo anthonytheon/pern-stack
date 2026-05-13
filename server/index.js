@@ -24,7 +24,7 @@ app.post("/job_orders", async (req, res) => {
       consignee_name,
       volume,
       shipping_line,
-      voyage_name,
+      vessel_name,
       port_of_loading,
       port_of_discharge,
       person_in_charge,
@@ -41,7 +41,8 @@ app.post("/job_orders", async (req, res) => {
       sppb_date,
       dooring_date,
 
-      extra_note
+      extra_note,
+      containers
     } = req.body;
 
     const cleanDate = (value) => {
@@ -67,7 +68,7 @@ app.post("/job_orders", async (req, res) => {
         consignee_name,
         volume,
         shipping_line,
-        voyage_name,
+        vessel_name,
         port_of_loading,
         port_of_discharge,
         person_in_charge,
@@ -108,7 +109,7 @@ app.post("/job_orders", async (req, res) => {
         consignee_name,
         volume,
         shipping_line,
-        voyage_name,
+        vessel_name,
         port_of_loading,
         port_of_discharge,
         person_in_charge,
@@ -129,7 +130,18 @@ app.post("/job_orders", async (req, res) => {
       ]
     );
 
-    res.json(newJobOrder.rows[0]);
+    const createdJob = newJobOrder.rows[0];
+
+    if (containers && containers.length > 0) {
+      for (const containerNumber of containers) {
+        await pool.query(
+          `INSERT INTO containers (job_order_id, container_number) VALUES ($1, $2)`,
+          [createdJob.job_order_id, containerNumber]
+        );
+      }
+    }
+
+    res.json(createdJob);
 
   } catch (error) {
     console.error(error.message);
@@ -152,13 +164,22 @@ app.get("/job_orders", async (req, res) => {
       type = ""
     } = req.query;
 
-    let query = "SELECT * FROM job_orders";
+    let query = `
+      SELECT jo.*, 
+        COALESCE(
+          string_agg(DISTINCT c.container_number, ', '), 
+          ''
+        ) as containers
+      FROM job_orders jo
+      LEFT JOIN containers c ON jo.job_order_id = c.job_order_id
+    `;
+    
     const queryParams = [];
     let paramCounter = 1;
     const whereConditions = [];
 
     if (type && type !== "ALL") {
-      whereConditions.push(`jo_type = $${paramCounter}`);
+      whereConditions.push(`jo.jo_type = $${paramCounter}`);
       queryParams.push(type);
       paramCounter++;
     }
@@ -169,21 +190,36 @@ app.get("/job_orders", async (req, res) => {
       if (searchField === "all") {
         whereConditions.push(`
           (
-            LOWER(aju_number) LIKE $${paramCounter} OR
-            LOWER(jo_number) LIKE $${paramCounter + 1} OR
-            LOWER(shipper_name) LIKE $${paramCounter + 2} OR
-            LOWER(consignee_name) LIKE $${paramCounter + 3} OR
-            LOWER(volume) LIKE $${paramCounter + 4}
+            LOWER(jo.aju_number) LIKE $${paramCounter} OR
+            LOWER(jo.jo_number) LIKE $${paramCounter + 1} OR
+            LOWER(jo.shipper_name) LIKE $${paramCounter + 2} OR
+            LOWER(jo.consignee_name) LIKE $${paramCounter + 3} OR
+            LOWER(jo.volume) LIKE $${paramCounter + 4} OR
+            EXISTS (
+              SELECT 1 FROM containers c 
+              WHERE c.job_order_id = jo.job_order_id 
+              AND LOWER(c.container_number) LIKE $${paramCounter + 5}
+            )
           )
         `);
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 6; i++) {
           queryParams.push(searchTerm);
         }
-        paramCounter += 5;
+        paramCounter += 6;
+      } else if (searchField === "container_number") {
+        whereConditions.push(`
+          EXISTS (
+            SELECT 1 FROM containers c 
+            WHERE c.job_order_id = jo.job_order_id 
+            AND LOWER(c.container_number) LIKE $${paramCounter}
+          )
+        `);
+        queryParams.push(searchTerm);
+        paramCounter++;
       } else {
         const validFields = ["aju_number", "jo_number", "shipper_name", "consignee_name", "volume"];
         if (validFields.includes(searchField)) {
-          whereConditions.push(`LOWER(${searchField}) LIKE $${paramCounter}`);
+          whereConditions.push(`LOWER(jo.${searchField}) LIKE $${paramCounter}`);
           queryParams.push(searchTerm);
           paramCounter++;
         }
@@ -193,9 +229,9 @@ app.get("/job_orders", async (req, res) => {
     if (year && year !== "") {
       whereConditions.push(`
         (
-          EXTRACT(YEAR FROM eta) = $${paramCounter} OR
-          EXTRACT(YEAR FROM etd) = $${paramCounter} OR
-          EXTRACT(YEAR FROM sppb_date) = $${paramCounter}
+          EXTRACT(YEAR FROM jo.eta) = $${paramCounter} OR
+          EXTRACT(YEAR FROM jo.etd) = $${paramCounter} OR
+          EXTRACT(YEAR FROM jo.sppb_date) = $${paramCounter}
         )
       `);
       queryParams.push(parseInt(year));
@@ -205,6 +241,8 @@ app.get("/job_orders", async (req, res) => {
     if (whereConditions.length > 0) {
       query += " WHERE " + whereConditions.join(" AND ");
     }
+
+    query += " GROUP BY jo.job_order_id";
 
     const validSortFields = [
       "job_order_id", "jo_number", "jo_type", "shipper_name", 
@@ -216,7 +254,7 @@ app.get("/job_orders", async (req, res) => {
     const validSort = validSortFields.includes(sort) ? sort : "eta";
     const validOrder = order.toUpperCase() === "DESC" ? "DESC" : "ASC";
     
-    query += ` ORDER BY ${validSort} ${validOrder}`;
+    query += ` ORDER BY jo.${validSort} ${validOrder}`;
 
     console.log("Executing query:", query);
     console.log("With params:", queryParams);
@@ -270,7 +308,7 @@ app.put("/job_orders/:id", async (req, res) => {
       consignee_name,
       volume,
       shipping_line,
-      voyage_name,
+      vessel_name,
       port_of_loading,
       port_of_discharge,
       person_in_charge,
@@ -287,7 +325,8 @@ app.put("/job_orders/:id", async (req, res) => {
       sppb_date,
       dooring_date,
 
-      extra_note
+      extra_note,
+      containers
     } = req.body;
 
     const cleanDate = (value) => {
@@ -313,7 +352,7 @@ app.put("/job_orders/:id", async (req, res) => {
         consignee_name = $4,
         volume = $5,
         shipping_line = $6,
-        voyage_name = $7,
+        vessel_name = $7,
         port_of_loading = $8,
         port_of_discharge = $9,
         person_in_charge = $10,
@@ -344,7 +383,7 @@ app.put("/job_orders/:id", async (req, res) => {
         consignee_name,
         volume,
         shipping_line,
-        voyage_name,
+        vessel_name,
         port_of_loading,
         port_of_discharge,
         person_in_charge,
@@ -366,6 +405,17 @@ app.put("/job_orders/:id", async (req, res) => {
         id
       ]
     );
+
+    await pool.query(`DELETE FROM containers WHERE job_order_id = $1`, [id]);
+    
+    if (containers && containers.length > 0) {
+      for (const containerNumber of containers) {
+        await pool.query(
+          `INSERT INTO containers (job_order_id, container_number) VALUES ($1, $2)`,
+          [id, containerNumber]
+        );
+      }
+    }
 
     res.json("Job Order Updated");
 
@@ -398,34 +448,58 @@ app.delete("/job_orders/:id", async (req, res) => {
 });
 
 // =========================
-// SERVE STATIC FILES (REACT VITE BUILD) - FIXED VERSION
+// GET SINGLE JOB ORDER (for details)
 // =========================
 
-// Use 'dist' folder (Vite default)
+app.get("/job_orders/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const result = await pool.query(
+      `
+      SELECT jo.*, 
+        COALESCE(
+          string_agg(DISTINCT c.container_number, ', '), 
+          ''
+        ) as containers
+      FROM job_orders jo
+      LEFT JOIN containers c ON jo.job_order_id = c.job_order_id
+      WHERE jo.job_order_id = $1
+      GROUP BY jo.job_order_id
+      `,
+      [id]
+    );
+    
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: "Job order not found" });
+    } else {
+      res.json(result.rows[0]);
+    }
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// =========================
+// SERVE STATIC FILES (REACT VITE BUILD)
+// =========================
+
 const distPath = path.join(__dirname, 'dist');
 
 if (fs.existsSync(distPath)) {
   console.log('✓ Serving React frontend from:', distPath);
-  
-  // Serve static files first
   app.use(express.static(distPath));
-  
-  // For client-side routing - serve index.html for any non-API request
-  // Using a middleware function instead of app.get('*')
   app.use((req, res, next) => {
-    // Skip API routes
     if (req.path.startsWith('/job_orders')) {
       return next();
     }
-    // Send index.html for all other routes
     res.sendFile(path.join(distPath, 'index.html'));
   });
-  
 } else {
   console.log('⚠ Warning: dist folder not found at:', distPath);
-  console.log('Please run "npm run build" in your frontend folder and copy the "dist" folder here');
   app.get('/', (req, res) => {
-    res.send('Backend is running! But frontend build not found. Run "npm run build" first.');
+    res.send('Backend is running! But frontend build not found.');
   });
 }
 

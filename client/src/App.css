@@ -537,3 +537,163 @@ th:hover {
 .modal-delete-btn:hover {
   background-color: #e31c5f !important;
 }
+
+/* VIEW DETAILS BUTTON */
+.view-btn {
+  background-color: #222222;
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  width: auto;
+  margin: 0;
+}
+
+.view-btn:hover {
+  opacity: 0.85;
+}
+
+/* DETAILS MODAL - LARGE SIZE */
+.details-modal {
+  background-color: #ffffff;
+  border-radius: 24px;
+  max-width: 800px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  border-bottom: 1px solid #eaeaea;
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 10;
+}
+
+.details-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #222222;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #717171;
+  width: auto;
+  padding: 0;
+}
+
+.close-btn:hover {
+  color: #222222;
+}
+
+.details-content {
+  padding: 24px 32px;
+}
+
+.details-section {
+  margin-bottom: 32px;
+}
+
+.details-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #222222;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #eaeaea;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.details-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.details-item label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #717171;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0;
+  background: transparent;
+  display: block;
+}
+
+.details-item span {
+  font-size: 15px;
+  color: #222222;
+  word-break: break-word;
+}
+
+.details-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 20px 32px;
+  border-top: 1px solid #eaeaea;
+  background: #fafafa;
+  border-radius: 0 0 24px 24px;
+}
+
+.edit-details-btn {
+  background-color: #222222;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: auto;
+}
+
+.delete-details-btn {
+  background-color: #ff385c;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: auto;
+}
+
+.close-details-btn {
+  background-color: white;
+  color: #222222;
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: auto;
+}
+
+.edit-details-btn:hover, .delete-details-btn:hover, .close-details-btn:hover {
+  opacity: 0.85;
+}
+
