@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import InputTodo from "./components/InputTodo";
 import ListTodos from "./components/ListTodos";
+import NetworkBar from "./components/NetworkBar";
 
 import "./App.css";
 
@@ -10,7 +11,7 @@ function App() {
 
   return (
     <main>
-
+      <NetworkBar />
       <ul className="navbar">
 
         <li
