@@ -1,27 +1,37 @@
+// ============================================================
 // HARDCODED API URL - CHANGE THIS IF YOUR IP CHANGES
+// ============================================================
 const API_BASE_URL = 'http://192.168.100.36:5000';
 
 import { useEffect, useState } from "react";
 
 const ListTodos = ({ type }) => {
-  const [jobOrders, setJobOrders] = useState([]);
-  const [editingJob, setEditingJob] = useState(null);
-  const [viewingJob, setViewingJob] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [jobToDelete, setJobToDelete] = useState(null);
+  // ============================================================
+  // STATE VARIABLES - Data and UI state
+  // ============================================================
+  const [jobOrders, setJobOrders] = useState([]);        // Stores all job orders from database
+  const [editingJob, setEditingJob] = useState(null);    // Job being edited (null = not editing)
+  const [viewingJob, setViewingJob] = useState(null);    // Job being viewed in details modal
+  const [loading, setLoading] = useState(false);         // Shows loading spinner while fetching
+  const [showDeleteModal, setShowDeleteModal] = useState(false);  // Controls delete confirmation popup
+  const [jobToDelete, setJobToDelete] = useState(null);  // Stores job ID before deletion
   
   // Container editing state
-  const [containerInput, setContainerInput] = useState("");
+  const [containerInput, setContainerInput] = useState("");  // Temporary input for adding containers
   
-  // Search/filter states
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchField, setSearchField] = useState("all");
-  const [selectedYear, setSelectedYear] = useState("");
-  const [sortField, setSortField] = useState("eta");
-  const [sortOrder, setSortOrder] = useState("ASC");
-  const [availableYears, setAvailableYears] = useState([]);
+  // ============================================================
+  // SEARCH & FILTER STATE VARIABLES
+  // ============================================================
+  const [searchTerm, setSearchTerm] = useState("");           // Text user types to search
+  const [searchField, setSearchField] = useState("all");      // Which field to search (all, ajus_number, etc)
+  const [selectedYear, setSelectedYear] = useState("");       // Year filter for dates
+  const [sortField, setSortField] = useState("eta");          // Which column to sort by
+  const [sortOrder, setSortOrder] = useState("ASC");          // ASC (A-Z) or DESC (Z-A)
+  const [availableYears, setAvailableYears] = useState([]);   // List of years for year dropdown
 
+  // ============================================================
+  // FETCH JOB ORDERS FROM BACKEND
+  // ============================================================
   const getJobOrders = async () => {
     setLoading(true);
     try {
@@ -56,6 +66,9 @@ const ListTodos = ({ type }) => {
     }
   };
 
+  // ============================================================
+  // FETCH UNIQUE YEARS FOR YEAR FILTER DROPDOWN
+  // ============================================================
   const getYears = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/job_orders/years`);
@@ -66,11 +79,17 @@ const ListTodos = ({ type }) => {
     }
   };
 
+  // ============================================================
+  // EFFECTS - Run when dependencies change
+  // ============================================================
   useEffect(() => {
     getJobOrders();
     getYears();
   }, [type, searchTerm, searchField, selectedYear, sortField, sortOrder]);
 
+  // ============================================================
+  // DELETE FUNCTIONS
+  // ============================================================
   const confirmDelete = (job) => {
     setJobToDelete(job);
     setShowDeleteModal(true);
@@ -97,6 +116,9 @@ const ListTodos = ({ type }) => {
     setJobToDelete(null);
   };
 
+  // ============================================================
+  // EDIT FUNCTIONS
+  // ============================================================
   const updateField = (e) => {
     setEditingJob({
       ...editingJob,
@@ -104,14 +126,12 @@ const ListTodos = ({ type }) => {
     });
   };
 
-  // Helper function to get containers array safely
   const getContainersArray = (containersStr) => {
     if (!containersStr) return [];
     if (Array.isArray(containersStr)) return containersStr;
     return containersStr.split(', ').filter(c => c && c.trim() !== "");
   };
 
-  // Container editing functions
   const addContainerToEdit = () => {
     if (containerInput.trim() !== "") {
       const currentContainers = getContainersArray(editingJob.containers);
@@ -154,6 +174,9 @@ const ListTodos = ({ type }) => {
     }
   };
 
+  // ============================================================
+  // DATE FORMATTING FUNCTIONS
+  // ============================================================
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -173,6 +196,9 @@ const ListTodos = ({ type }) => {
     });
   };
 
+  // ============================================================
+  // SORTING FUNCTIONS
+  // ============================================================
   const handleSort = (field) => {
     if (sortField === field) {
       setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC");
@@ -190,7 +216,17 @@ const ListTodos = ({ type }) => {
     setSortOrder("ASC");
   };
 
+  const getContainerList = () => {
+    if (!editingJob?.containers) return [];
+    if (Array.isArray(editingJob.containers)) return editingJob.containers;
+    return editingJob.containers.split(', ').filter(c => c && c.trim() !== "");
+  };
+
+  // ============================================================
+  // TABLE HEADERS RENDERER
+  // ============================================================
   const renderHeaders = () => {
+    // EXPORT Dashboard - NO action buttons
     if (type === "EXPORT") {
       return (
         <>
@@ -209,11 +245,14 @@ const ListTodos = ({ type }) => {
           <th onClick={() => handleSort("aju_number")} style={{ cursor: "pointer" }}>
             AJU Number {sortField === "aju_number" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
-          <th>View</th>
+          <th onClick={() => handleSort("shipping_line")} style={{ cursor: "pointer" }}>
+            Shipping Line {sortField === "shipping_line" && (sortOrder === "ASC" ? "↑" : "↓")}
+          </th>
         </>
       );
     }
     
+    // IMPORT Dashboard - NO action buttons
     if (type === "IMPORT") {
       return (
         <>
@@ -241,11 +280,14 @@ const ListTodos = ({ type }) => {
           <th onClick={() => handleSort("dooring_date")} style={{ cursor: "pointer" }}>
             Dooring Date {sortField === "dooring_date" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
-          <th>View</th>
+          <th onClick={() => handleSort("shipping_line")} style={{ cursor: "pointer" }}>
+            Shipping Line {sortField === "shipping_line" && (sortOrder === "ASC" ? "↑" : "↓")}
+          </th>
         </>
       );
     }
     
+    // DOMESTIC Dashboard - NO action buttons
     if (type === "DOMESTIC") {
       return (
         <>
@@ -261,11 +303,14 @@ const ListTodos = ({ type }) => {
           <th onClick={() => handleSort("port_of_loading")} style={{ cursor: "pointer" }}>
             Port of Loading {sortField === "port_of_loading" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
-          <th>View</th>
+          <th onClick={() => handleSort("shipping_line")} style={{ cursor: "pointer" }}>
+            Shipping Line {sortField === "shipping_line" && (sortOrder === "ASC" ? "↑" : "↓")}
+          </th>
         </>
       );
     }
     
+    // ALL Dashboard - HAS View Details + Edit + Delete buttons
     return (
       <>
         <th onClick={() => handleSort("jo_number")} style={{ cursor: "pointer" }}>
@@ -301,12 +346,20 @@ const ListTodos = ({ type }) => {
         <th onClick={() => handleSort("eta")} style={{ cursor: "pointer" }}>
           ETA {sortField === "eta" && (sortOrder === "ASC" ? "↑" : "↓")}
         </th>
-        <th>View</th>
+        <th onClick={() => handleSort("shipping_line")} style={{ cursor: "pointer" }}>
+          Shipping Line {sortField === "shipping_line" && (sortOrder === "ASC" ? "↑" : "↓")}
+        </th>
+        <th>View Details</th>
+        
       </>
     );
   };
 
+  // ============================================================
+  // TABLE ROWS RENDERER
+  // ============================================================
   const renderRowData = (job) => {
+    // EXPORT Dashboard - NO buttons at all
     if (type === "EXPORT") {
       return (
         <>
@@ -315,15 +368,12 @@ const ListTodos = ({ type }) => {
           <td>{job.volume}</td>
           <td>{job.port_of_loading}</td>
           <td>{job.aju_number}</td>
-          <td className="action-cell">
-            <button className="view-btn" onClick={() => setViewingJob(job)}>
-              View Details
-            </button>
-          </td>
+          <td>{job.shipping_line || "-"}</td>
         </>
       );
     }
     
+    // IMPORT Dashboard - NO buttons at all
     if (type === "IMPORT") {
       return (
         <>
@@ -335,15 +385,12 @@ const ListTodos = ({ type }) => {
           <td>{formatDate(job.eta)}</td>
           <td>{formatDate(job.sppb_date)}</td>
           <td>{formatDate(job.dooring_date)}</td>
-          <td className="action-cell">
-            <button className="view-btn" onClick={() => setViewingJob(job)}>
-              View Details
-            </button>
-          </td>
+          <td>{job.shipping_line || "-"}</td>
         </>
       );
     }
     
+    // DOMESTIC Dashboard - NO buttons at all
     if (type === "DOMESTIC") {
       return (
         <>
@@ -351,15 +398,12 @@ const ListTodos = ({ type }) => {
           <td>{job.shipper_name}</td>
           <td>{job.volume}</td>
           <td>{job.port_of_loading}</td>
-          <td className="action-cell">
-            <button className="view-btn" onClick={() => setViewingJob(job)}>
-              View Details
-            </button>
-          </td>
+          <td>{job.shipping_line || "-"}</td>
         </>
       );
     }
     
+    // ALL Dashboard - HAS View Details + Edit + Delete buttons
     return (
       <>
         <td>{job.jo_number}</td>
@@ -373,6 +417,7 @@ const ListTodos = ({ type }) => {
         <td>{job.port_of_discharge}</td>
         <td>{formatDate(job.etd)}</td>
         <td>{formatDate(job.eta)}</td>
+        <td>{job.shipping_line || "-"}</td>
         <td className="action-cell">
           <button className="view-btn" onClick={() => setViewingJob(job)}>
             View Details
@@ -382,6 +427,9 @@ const ListTodos = ({ type }) => {
     );
   };
 
+  // ============================================================
+  // DETAILS MODAL COMPONENT - Popup with full job details
+  // ============================================================
   const JobDetails = ({ job, onClose, onEdit, onDelete }) => {
     return (
       <div className="modal-overlay" onClick={onClose}>
@@ -515,16 +563,14 @@ const ListTodos = ({ type }) => {
     );
   };
 
-  const getContainerList = () => {
-    if (!editingJob?.containers) return [];
-    if (Array.isArray(editingJob.containers)) return editingJob.containers;
-    return editingJob.containers.split(', ').filter(c => c && c.trim() !== "");
-  };
-
+  // ============================================================
+  // MAIN RENDER
+  // ============================================================
   return (
     <div className="list-todos-container">
       <h2 className="dashboard-title">{type} Dashboard</h2>
 
+      {/* FILTER BAR - Only visible on ALL Dashboard */}
       {type === "ALL" && (
         <div className="filter-bar">
           <div className="search-group">
@@ -587,6 +633,7 @@ const ListTodos = ({ type }) => {
         </div>
       )}
 
+      {/* MAIN TABLE */}
       <div className="table-wrapper">
         <table className="data-table">
           <thead>
@@ -620,6 +667,7 @@ const ListTodos = ({ type }) => {
         </table>
       </div>
 
+      {/* DETAILS MODAL POPUP - Only appears when View Details is clicked on ALL Dashboard */}
       {viewingJob && (
         <JobDetails 
           job={viewingJob}
@@ -635,6 +683,7 @@ const ListTodos = ({ type }) => {
         />
       )}
 
+      {/* DELETE CONFIRMATION MODAL */}
       {showDeleteModal && (
         <div className="modal-overlay" onClick={cancelDelete}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -663,6 +712,7 @@ const ListTodos = ({ type }) => {
         </div>
       )}
 
+      {/* EDIT FORM MODAL - Shows when user clicks Edit on ALL Dashboard */}
       {editingJob && (
         <div className="edit-form">
           <h2>Edit Job Order</h2>

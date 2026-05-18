@@ -1,3 +1,9 @@
+/* ============================================================
+   GLOBAL STYLES - Airbnb Style
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
 body {
   margin: 0;
   padding: 0;
@@ -29,7 +35,9 @@ h1 {
   color: #222;
 }
 
-/* FORM */
+/* ============================================================
+   FORM STYLES
+   ============================================================ */
 
 form {
   background-color: white;
@@ -76,7 +84,9 @@ textarea {
   min-height: 120px;
 }
 
-/* BUTTONS */
+/* ============================================================
+   BUTTON STYLES
+   ============================================================ */
 
 button {
   width: 100%;
@@ -95,7 +105,10 @@ button:hover {
   opacity: 0.9;
 }
 
-/* TABLE CONTAINER & SCROLL */
+/* ============================================================
+   TABLE STYLES
+   ============================================================ */
+
 .list-todos-container {
   width: 100%;
 }
@@ -130,6 +143,13 @@ th {
   color: #717171;
   border-bottom: 1px solid #eeeeee;
   white-space: nowrap;
+  user-select: none;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+th:hover {
+  background-color: #f0f0f0;
 }
 
 td {
@@ -148,6 +168,7 @@ tr:hover {
   text-align: center;
 }
 
+/* Table Action Buttons */
 .edit-btn {
   background-color: #222222;
   color: white;
@@ -179,7 +200,26 @@ tr:hover {
   opacity: 0.85;
 }
 
-/* NAVBAR */
+.view-btn {
+  background-color: #222222;
+  color: white;
+  border: none;
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  width: auto;
+  margin: 0;
+}
+
+.view-btn:hover {
+  opacity: 0.85;
+}
+
+/* ============================================================
+   NAVBAR STYLES
+   ============================================================ */
 
 .navbar {
   list-style: none;
@@ -210,7 +250,9 @@ tr:hover {
   color: white;
 }
 
-/* EDIT FORM */
+/* ============================================================
+   EDIT FORM STYLES
+   ============================================================ */
 
 .edit-form {
   margin-top: 40px;
@@ -274,7 +316,29 @@ tr:hover {
   opacity: 0.9;
 }
 
-/* LABEL STYLES */
+.cancel-btn {
+  width: fit-content;
+  padding: 14px 24px;
+  border: 1px solid #dddddd;
+  border-radius: 12px;
+  background-color: white;
+  color: #666;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  margin: 0 auto;
+}
+
+.cancel-btn:hover {
+  background-color: #f5f5f5;
+  border-color: #ccc;
+}
+
+/* ============================================================
+   LABEL STYLES
+   ============================================================ */
+
 label {
   display: block;
   padding: 14px 18px 6px 18px;
@@ -284,7 +348,10 @@ label {
   background-color: white;
 }
 
-/* FILTER BAR STYLES */
+/* ============================================================
+   FILTER BAR STYLES
+   ============================================================ */
+
 .filter-bar {
   background-color: white;
   border-radius: 16px;
@@ -385,45 +452,10 @@ label {
   font-size: 15px;
 }
 
-/* SORTABLE HEADERS */
-th {
-  user-select: none;
-  transition: background-color 0.2s;
-  cursor: pointer;
-}
+/* ============================================================
+   MODAL STYLES - Airbnb Style
+   ============================================================ */
 
-th:hover {
-  background-color: #f0f0f0;
-}
-
-/* Cancel button */
-.cancel-btn {
-  width: fit-content;
-  padding: 14px 24px;
-  border: 1px solid #dddddd;
-  border-radius: 12px;
-  background-color: white;
-  color: #666;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-  margin: 0 auto;
-}
-
-.cancel-btn:hover {
-  background-color: #f5f5f5;
-  border-color: #ccc;
-}
-
-/* Loading state */
-.loading-spinner {
-  text-align: center;
-  padding: 40px;
-  color: #666;
-}
-
-/* MODAL - Airbnb Style (FULLY VISIBLE FIX) */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -538,25 +570,10 @@ th:hover {
   background-color: #e31c5f !important;
 }
 
-/* VIEW DETAILS BUTTON */
-.view-btn {
-  background-color: #222222;
-  color: white;
-  border: none;
-  padding: 6px 16px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  width: auto;
-  margin: 0;
-}
+/* ============================================================
+   DETAILS MODAL - Large Size
+   ============================================================ */
 
-.view-btn:hover {
-  opacity: 0.85;
-}
-
-/* DETAILS MODAL - LARGE SIZE */
 .details-modal {
   background-color: #ffffff;
   border-radius: 24px;
@@ -697,3 +714,763 @@ th:hover {
   opacity: 0.85;
 }
 
+/* ============================================================
+   CAROUSEL STYLES
+   ============================================================ */
+
+.carousel-container {
+  width: 100%;
+  position: relative;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 3px;
+  background-color: #e5e5e5;
+  border-radius: 3px;
+  margin-bottom: 30px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.progress-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #ff385c, #222222);
+  border-radius: 3px;
+  animation: progressFill 8s linear forwards;
+}
+
+@keyframes progressFill {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.carousel-content {
+  transition: opacity 0.3s ease-in-out;
+}
+
+.carousel-content.fade-in {
+  opacity: 1;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.carousel-content.fade-out {
+  opacity: 0;
+  animation: fadeOut 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.dashboard-wrapper {
+  width: 100%;
+}
+
+.carousel-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e5e5;
+  font-size: 13px;
+  color: #717171;
+}
+
+.auto-rotate-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dashboard-count {
+  background-color: #f7f7f7;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+/* ============================================================
+   TV DISPLAY - With Smooth Page Transition Animations
+   ============================================================ */
+
+/* Fade animation for rows when page changes */
+@keyframes tvFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tvFadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+}
+
+/* Table Wrapper with transition */
+.tv-table-wrapper {
+  flex: 1;
+  overflow-x: auto;
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+/* Table rows fade in animation */
+.tv-table tbody tr {
+  animation: tvFadeIn 0.4s ease forwards;
+  opacity: 0;
+}
+
+/* Staggered animation delays for each row */
+.tv-table tbody tr:nth-child(1) { animation-delay: 0.00s; }
+.tv-table tbody tr:nth-child(2) { animation-delay: 0.03s; }
+.tv-table tbody tr:nth-child(3) { animation-delay: 0.06s; }
+.tv-table tbody tr:nth-child(4) { animation-delay: 0.09s; }
+.tv-table tbody tr:nth-child(5) { animation-delay: 0.12s; }
+.tv-table tbody tr:nth-child(6) { animation-delay: 0.15s; }
+.tv-table tbody tr:nth-child(7) { animation-delay: 0.18s; }
+.tv-table tbody tr:nth-child(8) { animation-delay: 0.21s; }
+.tv-table tbody tr:nth-child(9) { animation-delay: 0.24s; }
+.tv-table tbody tr:nth-child(10) { animation-delay: 0.27s; }
+.tv-table tbody tr:nth-child(11) { animation-delay: 0.30s; }
+.tv-table tbody tr:nth-child(12) { animation-delay: 0.33s; }
+.tv-table tbody tr:nth-child(13) { animation-delay: 0.36s; }
+.tv-table tbody tr:nth-child(14) { animation-delay: 0.39s; }
+.tv-table tbody tr:nth-child(15) { animation-delay: 0.42s; }
+
+/* Progress Bar Animation */
+.tv-progress-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #00a8ff, #00ff88);
+  animation: tvProgressFill 10s linear infinite;
+  transform-origin: left;
+}
+
+@keyframes tvProgressFill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* Pulse animation for page badge when changing */
+@keyframes tvPulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; background: #00ff88; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.tv-page-badge {
+  background: linear-gradient(135deg, #00a8ff, #0088cc);
+  color: white;
+  padding: 10px 28px;
+  border-radius: 40px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.tv-page-badge.page-changing {
+  animation: tvPulse 0.5s ease;
+}
+
+/* Subtle glow effect on table headers */
+.tv-table th {
+  padding: 18px 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #00a8ff;
+  border-bottom: 2px solid rgba(0, 168, 255, 0.3);
+  text-transform: uppercase;
+  background: rgba(0, 168, 255, 0.05);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.tv-table th:hover {
+  background: rgba(0, 168, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Row hover effect */
+.tv-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.tv-table tbody tr:hover {
+  background: rgba(0, 168, 255, 0.15);
+  transform: scale(1.01);
+  box-shadow: 0 2px 8px rgba(0, 168, 255, 0.2);
+}
+
+/* Footer text animation */
+.tv-footer-text {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+
+.tv-footer-bold {
+  color: #00ff88;
+  font-weight: 800;
+  animation: tvBlink 2s ease-in-out infinite;
+}
+
+@keyframes tvBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* ============================================================
+   TV DISPLAY - Modern Digital Signage Style
+   Like Airport/NUS LED Display
+   ============================================================ */
+
+/* Import bold modern fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.tv-app {
+  width: 100vw;
+  height: 100vh;
+  background: #0a0e1a;
+  overflow: hidden;
+  position: relative;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ============================================================
+   HIDDEN ADMIN BAR (Appears on hover at bottom)
+   ============================================================ */
+.tv-admin-bar {
+  position: fixed;
+  bottom: -60px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+  transition: bottom 0.3s ease;
+  border-top: 1px solid rgba(0, 168, 255, 0.3);
+}
+
+.tv-app:hover .tv-admin-bar {
+  bottom: 0;
+}
+
+.tv-admin-btn {
+  padding: 10px 24px;
+  background: #1a1f2e;
+  border: 1px solid #2a3042;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.tv-admin-btn:hover {
+  background: #2a3042;
+  transform: scale(1.02);
+}
+
+.tv-admin-btn.active {
+  background: #00a8ff;
+  border-color: #00a8ff;
+  color: white;
+}
+
+/* ============================================================
+   MAIN TV CONTAINER
+   ============================================================ */
+.tv-container {
+  width: 100%;
+  height: 100%;
+  padding: 32px 48px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #0a0e1a 0%, #0f1422 100%);
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ============================================================
+   HEADER SECTION
+   ============================================================ */
+.tv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(0, 168, 255, 0.3);
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+}
+
+.tv-title {
+  flex: 1;
+}
+
+.tv-title h1 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 8px;
+}
+
+.tv-title h2 {
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #ffffff, #00a8ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin: 0;
+}
+
+.tv-datetime {
+  text-align: right;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 12px 24px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 168, 255, 0.2);
+  min-width: 280px;
+}
+
+.tv-time {
+  font-size: 42px;
+  font-weight: 700;
+  color: #00ff88;
+  font-family: 'Inter', monospace;
+  letter-spacing: 2px;
+}
+
+.tv-date {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 6px;
+}
+
+/* ============================================================
+   TV CONTROLS PANEL
+   ============================================================ */
+.tv-controls-panel {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  z-index: 100;
+  border: 1px solid rgba(0, 168, 255, 0.3);
+  animation: slideDown 0.3s ease;
+}
+
+.tv-search {
+  flex: 2;
+  min-width: 280px;
+  position: relative;
+}
+
+.tv-search-input {
+  width: 100%;
+  padding: 14px 18px;
+  background: #1a1f2e;
+  border: 1px solid #2a3042;
+  border-radius: 14px;
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+}
+
+.tv-search-input:focus {
+  border-color: #00a8ff;
+}
+
+.tv-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.tv-clear-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #ff385c;
+  border: none;
+  border-radius: 30px;
+  padding: 5px 14px;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  width: auto;
+}
+
+.tv-filter-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tv-filter-select {
+  padding: 14px 20px;
+  background: #1a1f2e;
+  border: 1px solid #2a3042;
+  border-radius: 14px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
+.tv-filter-select:hover {
+  border-color: #00a8ff;
+}
+
+.tv-reset-btn {
+  padding: 14px 28px;
+  background: #00a8ff;
+  border: none;
+  border-radius: 14px;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  width: auto;
+  transition: all 0.2s;
+}
+
+.tv-reset-btn:hover {
+  background: #0088cc;
+}
+
+/* ============================================================
+   PAGE INFO
+   ============================================================ */
+.tv-page-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tv-page-badge {
+  background: linear-gradient(135deg, #00a8ff, #0088cc);
+  color: white;
+  padding: 10px 28px;
+  border-radius: 40px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.tv-record-count {
+  color: #00ff88;
+  font-size: 14px;
+  font-weight: 700;
+  background: rgba(0, 255, 136, 0.1);
+  padding: 10px 24px;
+  border-radius: 40px;
+}
+
+/* ============================================================
+   MAIN TABLE
+   ============================================================ */
+.tv-table-wrapper {
+  flex: 1;
+  overflow-x: auto;
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tv-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1000px;
+}
+
+.tv-table th {
+  padding: 18px 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #00a8ff;
+  border-bottom: 2px solid rgba(0, 168, 255, 0.3);
+  text-transform: uppercase;
+  background: rgba(0, 168, 255, 0.05);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.tv-table th:hover {
+  background: rgba(0, 168, 255, 0.15);
+}
+
+.tv-table td {
+  padding: 16px;
+  text-align: left;
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tv-table tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.tv-table tr:nth-child(odd) {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tv-table tr:hover {
+  background: rgba(0, 168, 255, 0.1);
+}
+
+.tv-row-empty td {
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.tv-sort-icon {
+  display: inline-block;
+  margin-left: 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.tv-footer {
+  margin-top: auto;
+}
+
+.tv-progress-container {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.tv-progress-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #00a8ff, #00ff88);
+  animation: tvProgressFill 10s linear infinite;
+  transform-origin: left;
+}
+
+@keyframes tvProgressFill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.tv-footer-text {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 13px;
+  font-weight: 600;
+  flex-wrap: wrap;
+}
+
+.tv-footer-bold {
+  color: #00ff88;
+  font-weight: 800;
+}
+
+/* ============================================================
+   LOADING SCREEN
+   ============================================================ */
+.tv-loading {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #0a0e1a 0%, #0f1422 100%);
+  color: #00a8ff;
+  font-size: 32px;
+  font-weight: 800;
+  gap: 24px;
+  font-family: 'Inter', sans-serif;
+}
+
+.tv-loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(0, 168, 255, 0.2);
+  border-top-color: #00a8ff;
+  border-radius: 50%;
+  animation: tvSpin 0.8s linear infinite;
+}
+
+@keyframes tvSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (min-width: 1920px) {
+  .tv-table td { font-size: 22px; padding: 20px; }
+  .tv-table th { font-size: 16px; padding: 22px; }
+  .tv-title h2 { font-size: 56px; }
+  .tv-time { font-size: 52px; }
+}
+
+@media (max-width: 1200px) {
+  .tv-container { padding: 24px 30px; }
+  .tv-table td { font-size: 16px; padding: 14px; }
+  .tv-title h2 { font-size: 36px; }
+  .tv-time { font-size: 32px; }
+  .tv-datetime { min-width: 240px; padding: 10px 18px; }
+}
+
+@media (max-width: 768px) {
+  .tv-container { padding: 16px 20px; }
+  .tv-header { flex-direction: column; align-items: flex-start; }
+  .tv-datetime { text-align: left; width: 100%; }
+  .tv-table td { font-size: 14px; padding: 10px; }
+  .tv-table th { font-size: 11px; padding: 12px; }
+  .tv-title h2 { font-size: 28px; }
+  .tv-time { font-size: 28px; }
+  .tv-controls-panel { flex-direction: column; }
+  .tv-admin-bar { gap: 8px; }
+  .tv-admin-btn { padding: 8px 16px; font-size: 11px; }
+}
+
+/* ============================================================
+   FULLSCREEN MODE
+   ============================================================ */
+:-webkit-full-screen .tv-container { padding: 40px 60px; }
+:-moz-full-screen .tv-container { padding: 40px 60px; }
+:fullscreen .tv-container { padding: 40px 60px; }
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+.tv-table-wrapper::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.tv-table-wrapper::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.tv-table-wrapper::-webkit-scrollbar-thumb {
+  background: #00a8ff;
+  border-radius: 3px;
+}
+
+/* ============================================================
+   PREVENT HORIZONTAL SCROLL
+   ============================================================ */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}

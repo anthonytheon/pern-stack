@@ -1,66 +1,45 @@
-import { useState } from "react";
+// ============================================================
+// NORMAL DASHBOARD - Regular work computers
+// ============================================================
 
-import InputTodo from "./components/InputTodo";
+import { useState } from "react";
 import ListTodos from "./components/ListTodos";
+import InputTodo from "./components/InputTodo";
 import NetworkBar from "./components/NetworkBar";
 
-import "./App.css";
+import './App.css';
 
 function App() {
-  const [page, setPage] = useState("dashboard");
+  const [currentView, setCurrentView] = useState("ALL");
 
   return (
     <main>
+      {/* Network Address Bar - shows URL for employees */}
       <NetworkBar />
+      
+      <h1>GST Job Order System</h1>
+      
+      {/* Navigation Tabs */}
       <ul className="navbar">
-
-        <li
-          onClick={() => setPage("dashboard")}
-          className={page === "dashboard" ? "active" : ""}
-        >
-          Dashboard
+        <li className={currentView === 'ALL' ? 'active' : ''} onClick={() => setCurrentView('ALL')}>
+          ALL Dashboard
         </li>
-
-        <li
-          onClick={() => setPage("export")}
-          className={page === "export" ? "active" : ""}
-        >
+        <li className={currentView === 'EXPORT' ? 'active' : ''} onClick={() => setCurrentView('EXPORT')}>
           Export
         </li>
-
-        <li
-          onClick={() => setPage("import")}
-          className={page === "import" ? "active" : ""}
-        >
+        <li className={currentView === 'IMPORT' ? 'active' : ''} onClick={() => setCurrentView('IMPORT')}>
           Import
         </li>
-
-        <li
-          onClick={() => setPage("domestic")}
-          className={page === "domestic" ? "active" : ""}
-        >
+        <li className={currentView === 'DOMESTIC' ? 'active' : ''} onClick={() => setCurrentView('DOMESTIC')}>
           Domestic
         </li>
-
-        <li
-          onClick={() => setPage("form")}
-          className={page === "form" ? "active" : ""}
-        >
-          Create JO
-        </li>
-
       </ul>
 
-      {page === "dashboard" && <ListTodos type="ALL" />}
-
-      {page === "export" && <ListTodos type="EXPORT" />}
-
-      {page === "import" && <ListTodos type="IMPORT" />}
-
-      {page === "domestic" && <ListTodos type="DOMESTIC" />}
-
-      {page === "form" && <InputTodo />}
-
+      {/* Create Job Order Form */}
+      <InputTodo />
+      
+      {/* List/Dashboard View */}
+      <ListTodos type={currentView} />
     </main>
   );
 }
