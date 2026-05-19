@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { API_BASE_URL } from '../config';
 
 const EditTodo = ({ job }) => {
 
@@ -10,7 +11,7 @@ const EditTodo = ({ job }) => {
     consignee_name: job.consignee_name || "",
     volume: job.volume || "",
     shipping_line: job.shipping_line || "",
-    voyage_name: job.voyage_name || "",
+    vessel_name: job.vessel_name || "",  // Changed from voyage_name to vessel_name
     port_of_loading: job.port_of_loading || "",
     port_of_discharge: job.port_of_discharge || "",
     person_in_charge: job.person_in_charge || "",
@@ -52,7 +53,7 @@ const EditTodo = ({ job }) => {
     try {
 
       await fetch(
-        `http://localhost:5000/job_orders/${job.job_order_id}`,
+        `${API_BASE_URL}/job_orders/${job.job_order_id}`,
         {
           method: "PUT",
           headers: {
@@ -118,10 +119,10 @@ const EditTodo = ({ job }) => {
 
         <input
           type="text"
-          name="voyage_name"
-          value={formData.voyage_name}
+          name="vessel_name"
+          value={formData.vessel_name}
           onChange={onChange}
-          placeholder="Voyage Name"
+          placeholder="Vessel Name"
         />
 
         <input

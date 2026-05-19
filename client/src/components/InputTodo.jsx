@@ -1,7 +1,5 @@
 import { useState } from "react";
-
-// HARDCODED API URL - CHANGE THIS IF YOUR IP CHANGES
-const API_BASE_URL = 'http://192.168.100.36:5000';
+import { API_BASE_URL } from '../config';
 
 const InputTodo = () => {
   const [joType, setJoType] = useState("");
