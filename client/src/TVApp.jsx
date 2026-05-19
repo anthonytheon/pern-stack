@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import TVDisplay from "./components/TVDisplay";
-import './tv-styles.css';  // IMPORT YOUR TV CSS HERE
 
 function TVApp() {
   const { type } = useParams();

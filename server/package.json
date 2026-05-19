@@ -1,14 +1,23 @@
 {
-  "name": "server",
+  "name": "gst-job-order-server",
   "version": "1.0.0",
+  "description": "GST Job Order Management System",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "seed": "node seed.js"
+    "start": "node index.js",
+    "seed": "node seed.js",
+    "seed:big": "node seed-big.js",
+    "build-exe": "pkg . --target node18-win-x64 --output gst-job-order.exe"
   },
   "author": "",
   "license": "ISC",
-  "description": "",
+  "pkg": {
+    "assets": [
+      "dist/**/*",
+      "db.js"
+    ]
+  },
   "dependencies": {
     "@faker-js/faker": "^10.4.0",
     "cors": "^2.8.6",
