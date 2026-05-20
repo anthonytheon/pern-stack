@@ -4,6 +4,7 @@
 // ============================================================
 
 import { useState, useEffect } from "react";
+import { API_BASE_URL } from '../config';
 
 const TVDisplay = ({ type }) => {
   const [jobOrders, setJobOrders] = useState([]);
@@ -20,8 +21,7 @@ const TVDisplay = ({ type }) => {
   const [showControls, setShowControls] = useState(false);
   const [availableYears, setAvailableYears] = useState([]);
   const [selectedYear, setSelectedYear] = useState("");
-
-  const API_BASE_URL = 'http://192.168.100.36:5000';
+  
 
   // Fetch job orders
   const getJobOrders = async () => {
