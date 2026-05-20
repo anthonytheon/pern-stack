@@ -1474,3 +1474,46 @@ html, body {
   overflow-x: hidden;
   max-width: 100%;
 }
+
+/* Form field labels - always visible */
+.form-section label {
+  display: block;
+  padding: 14px 18px 4px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #717171;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background-color: white;
+  margin: 0;
+}
+
+/* Input fields with consistent styling */
+.form-section input,
+.form-section textarea,
+.form-section select {
+  width: 100%;
+  padding: 12px 18px 16px 18px;
+  border: none;
+  border-bottom: 1px solid #e5e5e5;
+  font-size: 16px;
+  box-sizing: border-box;
+  outline: none;
+  background-color: white;
+}
+
+/* Placeholder styling */
+.form-section input::placeholder,
+.form-section textarea::placeholder {
+  color: #bbb;
+  font-weight: 400;
+  font-size: 14px;
+}
+
+/* Focus state */
+.form-section input:focus,
+.form-section textarea:focus,
+.form-section select:focus {
+  border-bottom-color: #222222;
+  background-color: #fafafa;
+}

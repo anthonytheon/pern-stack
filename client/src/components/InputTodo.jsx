@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { API_BASE_URL } from '../config';
 
 const InputTodo = () => {
@@ -10,23 +11,23 @@ const InputTodo = () => {
     consignee_name: "",
     volume: "",
     shipping_line: "",
-    vessel_name: "",  // CHANGED: from voyage_name to vessel_name
+    vessel_name: "",
     port_of_loading: "",
     port_of_discharge: "",
     person_in_charge: "",
     aju_number: "",
     eta: "",
     etd: "",
-    goods: "",  // Will be input text, not textarea
+    goods: "",
     loading_date: "",
     closing_date: "",
     sppb_date: "",
     dooring_date: "",
     extra_note: "",
-    containers: []  // NEW: array for multiple containers
+    containers: []
   });
 
-  const [containerInput, setContainerInput] = useState(""); // Temporary input for container number
+  const [containerInput, setContainerInput] = useState("");
 
   const addContainer = () => {
     if (containerInput.trim() !== "") {
@@ -83,10 +84,9 @@ const InputTodo = () => {
 
       <h2>Create Job Order</h2>
 
-      {/* JO TYPE */}
-
+      {/* JO TYPE SELECTION */}
       <div className="form-section">
-
+        <label>JO Type *</label>
         <select
           value={joType}
           onChange={(e) => setJoType(e.target.value)}
@@ -97,109 +97,109 @@ const InputTodo = () => {
           <option value="IMPORT">IMPORT</option>
           <option value="DOMESTIC">DOMESTIC</option>
         </select>
-
       </div>
-
-      {/* ONLY SHOW FORM AFTER TYPE SELECTED */}
 
       {joType && (
         <>
-
-          {/* COMMON FIELDS */}
-
           <h3>Common Information</h3>
-
           <div className="form-section">
-
+            <label>JO Number *</label>
             <input
               type="text"
               name="jo_number"
-              placeholder="JO Number"
+              placeholder="Enter JO Number"
               value={formData.jo_number}
               onChange={onChange}
+              required
             />
 
+            <label>Shipper Name</label>
             <input
               type="text"
               name="shipper_name"
-              placeholder="Shipper Name"
+              placeholder="Enter Shipper Name"
               value={formData.shipper_name}
               onChange={onChange}
             />
 
+            <label>Consignee Name</label>
             <input
               type="text"
               name="consignee_name"
-              placeholder="Consignee Name"
+              placeholder="Enter Consignee Name"
               value={formData.consignee_name}
               onChange={onChange}
             />
 
+            <label>Volume</label>
             <input
               type="text"
               name="volume"
-              placeholder="Volume"
+              placeholder="e.g., 2x40, 1x20"
               value={formData.volume}
               onChange={onChange}
             />
 
+            <label>Shipping Line</label>
             <input
               type="text"
               name="shipping_line"
-              placeholder="Shipping Line"
+              placeholder="e.g., MAERSK, MSC"
               value={formData.shipping_line}
               onChange={onChange}
             />
 
+            <label>Vessel Name</label>
             <input
               type="text"
-              name="vessel_name"  // CHANGED: from voyage_name to vessel_name
-              placeholder="Vessel Name"
+              name="vessel_name"
+              placeholder="Enter Vessel Name"
               value={formData.vessel_name}
               onChange={onChange}
             />
 
+            <label>Port of Loading</label>
             <input
               type="text"
               name="port_of_loading"
-              placeholder="Port of Loading"
+              placeholder="e.g., Surabaya, Jakarta"
               value={formData.port_of_loading}
               onChange={onChange}
             />
 
+            <label>Port of Discharge</label>
             <input
               type="text"
               name="port_of_discharge"
-              placeholder="Port of Discharge"
+              placeholder="e.g., Singapore, Bangkok"
               value={formData.port_of_discharge}
               onChange={onChange}
             />
 
+            <label>Person In Charge</label>
             <input
               type="text"
               name="person_in_charge"
-              placeholder="Person In Charge"
+              placeholder="Name of PIC"
               value={formData.person_in_charge}
               onChange={onChange}
             />
 
+            <label>AJU Number</label>
             <input
               type="text"
               name="aju_number"
-              placeholder="AJU Number"
+              placeholder="Enter AJU Number"
               value={formData.aju_number}
               onChange={onChange}
             />
-
           </div>
 
-          {/* CONTAINERS SECTION - NEW */}
-
+          {/* CONTAINERS SECTION */}
           <h3>Containers</h3>
-
           <div className="form-section">
             <div style={{ padding: "18px" }}>
-              <div style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+              <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
                 <input
                   type="text"
                   placeholder="Enter Container Number (e.g., GESU1234567)"
@@ -217,7 +217,7 @@ const InputTodo = () => {
               </div>
 
               {formData.containers.length > 0 && (
-                <div style={{ marginTop: "15px" }}>
+                <div>
                   <label style={{ display: "block", marginBottom: "10px", fontWeight: "600" }}>Added Containers:</label>
                   {formData.containers.map((container, index) => (
                     <div key={index} style={{ 
@@ -250,12 +250,9 @@ const InputTodo = () => {
           </div>
 
           {/* DATE FIELDS */}
-
           <h3>Dates</h3>
-
           <div className="form-section">
-
-            <label>ETA</label>
+            <label>ETA (Estimated Time of Arrival)</label>
             <input
               type="date"
               name="eta"
@@ -263,15 +260,13 @@ const InputTodo = () => {
               onChange={onChange}
             />
 
-            <label>ETD</label>
+            <label>ETD (Estimated Time of Departure)</label>
             <input
               type="date"
               name="etd"
               value={formData.etd}
               onChange={onChange}
             />
-
-            {/* EXPORT + DOMESTIC */}
 
             {(joType === "EXPORT" || joType === "DOMESTIC") && (
               <>
@@ -293,8 +288,6 @@ const InputTodo = () => {
               </>
             )}
 
-            {/* IMPORT */}
-
             {joType === "IMPORT" && (
               <>
                 <label>SPPB Date</label>
@@ -314,39 +307,34 @@ const InputTodo = () => {
                 />
               </>
             )}
-
           </div>
 
-          {/* GOODS - CHANGED from textarea to input */}
-
+          {/* ADDITIONAL INFORMATION */}
           <h3>Additional Information</h3>
-
           <div className="form-section">
-
+            <label>Goods / Commodity</label>
             <input
               type="text"
               name="goods"
-              placeholder="Goods / Commodity"
+              placeholder="Describe the goods"
               value={formData.goods}
               onChange={onChange}
             />
 
+            <label>Extra Note</label>
             <textarea
               name="extra_note"
-              placeholder="Extra Note"
+              placeholder="Any additional notes..."
               value={formData.extra_note}
               onChange={onChange}
             />
-
           </div>
 
           <button type="submit">
             Create Job Order
           </button>
-
         </>
       )}
-
     </form>
   );
 };

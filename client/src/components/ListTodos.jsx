@@ -1,33 +1,27 @@
-import { useEffect, useState } from "react";
+// HARDCODED API URL - CHANGE THIS IF YOUR IP CHANGES
 import { API_BASE_URL } from '../config';
 
+import { useEffect, useState } from "react";
+
 const ListTodos = ({ type }) => {
-  // ============================================================
-  // STATE VARIABLES - Data and UI state
-  // ============================================================
-  const [jobOrders, setJobOrders] = useState([]);        // Stores all job orders from database
-  const [editingJob, setEditingJob] = useState(null);    // Job being edited (null = not editing)
-  const [viewingJob, setViewingJob] = useState(null);    // Job being viewed in details modal
-  const [loading, setLoading] = useState(false);         // Shows loading spinner while fetching
-  const [showDeleteModal, setShowDeleteModal] = useState(false);  // Controls delete confirmation popup
-  const [jobToDelete, setJobToDelete] = useState(null);  // Stores job ID before deletion
+  const [jobOrders, setJobOrders] = useState([]);
+  const [editingJob, setEditingJob] = useState(null);
+  const [viewingJob, setViewingJob] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [jobToDelete, setJobToDelete] = useState(null);
   
   // Container editing state
-  const [containerInput, setContainerInput] = useState("");  // Temporary input for adding containers
+  const [containerInput, setContainerInput] = useState("");
   
-  // ============================================================
-  // SEARCH & FILTER STATE VARIABLES
-  // ============================================================
-  const [searchTerm, setSearchTerm] = useState("");           // Text user types to search
-  const [searchField, setSearchField] = useState("all");      // Which field to search (all, ajus_number, etc)
-  const [selectedYear, setSelectedYear] = useState("");       // Year filter for dates
-  const [sortField, setSortField] = useState("eta");          // Which column to sort by
-  const [sortOrder, setSortOrder] = useState("ASC");          // ASC (A-Z) or DESC (Z-A)
-  const [availableYears, setAvailableYears] = useState([]);   // List of years for year dropdown
+  // Search/filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchField, setSearchField] = useState("all");
+  const [selectedYear, setSelectedYear] = useState("");
+  const [sortField, setSortField] = useState("eta");
+  const [sortOrder, setSortOrder] = useState("ASC");
+  const [availableYears, setAvailableYears] = useState([]);
 
-  // ============================================================
-  // FETCH JOB ORDERS FROM BACKEND
-  // ============================================================
   const getJobOrders = async () => {
     setLoading(true);
     try {
@@ -62,9 +56,6 @@ const ListTodos = ({ type }) => {
     }
   };
 
-  // ============================================================
-  // FETCH UNIQUE YEARS FOR YEAR FILTER DROPDOWN
-  // ============================================================
   const getYears = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/job_orders/years`);
@@ -75,17 +66,11 @@ const ListTodos = ({ type }) => {
     }
   };
 
-  // ============================================================
-  // EFFECTS - Run when dependencies change
-  // ============================================================
   useEffect(() => {
     getJobOrders();
     getYears();
   }, [type, searchTerm, searchField, selectedYear, sortField, sortOrder]);
 
-  // ============================================================
-  // DELETE FUNCTIONS
-  // ============================================================
   const confirmDelete = (job) => {
     setJobToDelete(job);
     setShowDeleteModal(true);
@@ -112,9 +97,6 @@ const ListTodos = ({ type }) => {
     setJobToDelete(null);
   };
 
-  // ============================================================
-  // EDIT FUNCTIONS
-  // ============================================================
   const updateField = (e) => {
     setEditingJob({
       ...editingJob,
@@ -170,9 +152,6 @@ const ListTodos = ({ type }) => {
     }
   };
 
-  // ============================================================
-  // DATE FORMATTING FUNCTIONS
-  // ============================================================
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -192,9 +171,6 @@ const ListTodos = ({ type }) => {
     });
   };
 
-  // ============================================================
-  // SORTING FUNCTIONS
-  // ============================================================
   const handleSort = (field) => {
     if (sortField === field) {
       setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC");
@@ -212,17 +188,8 @@ const ListTodos = ({ type }) => {
     setSortOrder("ASC");
   };
 
-  const getContainerList = () => {
-    if (!editingJob?.containers) return [];
-    if (Array.isArray(editingJob.containers)) return editingJob.containers;
-    return editingJob.containers.split(', ').filter(c => c && c.trim() !== "");
-  };
-
-  // ============================================================
-  // TABLE HEADERS RENDERER
-  // ============================================================
   const renderHeaders = () => {
-    // EXPORT Dashboard - NO action buttons
+    // EXPORT Dashboard
     if (type === "EXPORT") {
       return (
         <>
@@ -244,11 +211,12 @@ const ListTodos = ({ type }) => {
           <th onClick={() => handleSort("shipping_line")} style={{ cursor: "pointer" }}>
             Shipping Line {sortField === "shipping_line" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
+          <th>View</th>
         </>
       );
     }
     
-    // IMPORT Dashboard - NO action buttons
+    // IMPORT Dashboard
     if (type === "IMPORT") {
       return (
         <>
@@ -279,11 +247,12 @@ const ListTodos = ({ type }) => {
           <th onClick={() => handleSort("shipping_line")} style={{ cursor: "pointer" }}>
             Shipping Line {sortField === "shipping_line" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
+          <th>View</th>
         </>
       );
     }
     
-    // DOMESTIC Dashboard - NO action buttons
+    // DOMESTIC Dashboard
     if (type === "DOMESTIC") {
       return (
         <>
@@ -302,18 +271,16 @@ const ListTodos = ({ type }) => {
           <th onClick={() => handleSort("shipping_line")} style={{ cursor: "pointer" }}>
             Shipping Line {sortField === "shipping_line" && (sortOrder === "ASC" ? "↑" : "↓")}
           </th>
+          <th>View</th>
         </>
       );
     }
     
-    // ALL Dashboard - HAS View Details + Edit + Delete buttons
+    // ALL Dashboard - NO JO TYPE column
     return (
       <>
         <th onClick={() => handleSort("jo_number")} style={{ cursor: "pointer" }}>
           JO Number {sortField === "jo_number" && (sortOrder === "ASC" ? "↑" : "↓")}
-        </th>
-        <th onClick={() => handleSort("jo_type")} style={{ cursor: "pointer" }}>
-          Type {sortField === "jo_type" && (sortOrder === "ASC" ? "↑" : "↓")}
         </th>
         <th onClick={() => handleSort("loading_date")} style={{ cursor: "pointer" }}>
           Loading Date {sortField === "loading_date" && (sortOrder === "ASC" ? "↑" : "↓")}
@@ -346,16 +313,14 @@ const ListTodos = ({ type }) => {
           Shipping Line {sortField === "shipping_line" && (sortOrder === "ASC" ? "↑" : "↓")}
         </th>
         <th>View Details</th>
-        
+        <th>Edit</th>
+        <th>Delete</th>
       </>
     );
   };
 
-  // ============================================================
-  // TABLE ROWS RENDERER
-  // ============================================================
   const renderRowData = (job) => {
-    // EXPORT Dashboard - NO buttons at all
+    // EXPORT Dashboard
     if (type === "EXPORT") {
       return (
         <>
@@ -365,11 +330,16 @@ const ListTodos = ({ type }) => {
           <td>{job.port_of_loading}</td>
           <td>{job.aju_number}</td>
           <td>{job.shipping_line || "-"}</td>
+          <td className="action-cell">
+            <button className="view-btn" onClick={() => setViewingJob(job)}>
+              View Details
+            </button>
+          </td>
         </>
       );
     }
     
-    // IMPORT Dashboard - NO buttons at all
+    // IMPORT Dashboard
     if (type === "IMPORT") {
       return (
         <>
@@ -382,11 +352,16 @@ const ListTodos = ({ type }) => {
           <td>{formatDate(job.sppb_date)}</td>
           <td>{formatDate(job.dooring_date)}</td>
           <td>{job.shipping_line || "-"}</td>
+          <td className="action-cell">
+            <button className="view-btn" onClick={() => setViewingJob(job)}>
+              View Details
+            </button>
+          </td>
         </>
       );
     }
     
-    // DOMESTIC Dashboard - NO buttons at all
+    // DOMESTIC Dashboard
     if (type === "DOMESTIC") {
       return (
         <>
@@ -395,15 +370,19 @@ const ListTodos = ({ type }) => {
           <td>{job.volume}</td>
           <td>{job.port_of_loading}</td>
           <td>{job.shipping_line || "-"}</td>
+          <td className="action-cell">
+            <button className="view-btn" onClick={() => setViewingJob(job)}>
+              View Details
+            </button>
+          </td>
         </>
       );
     }
     
-    // ALL Dashboard - HAS View Details + Edit + Delete buttons
+    // ALL Dashboard - NO JO Type column
     return (
       <>
         <td>{job.jo_number}</td>
-        <td>{job.jo_type}</td>
         <td>{formatDate(job.loading_date)}</td>
         <td>{job.shipper_name}</td>
         <td>{job.aju_number}</td>
@@ -419,13 +398,20 @@ const ListTodos = ({ type }) => {
             View Details
           </button>
         </td>
+        <td className="action-cell">
+          <button className="edit-btn" onClick={() => setEditingJob(job)}>
+            Edit
+          </button>
+        </td>
+        <td className="action-cell">
+          <button className="delete-btn" onClick={() => confirmDelete(job)}>
+            Delete
+          </button>
+        </td>
       </>
     );
   };
 
-  // ============================================================
-  // DETAILS MODAL COMPONENT - Popup with full job details
-  // ============================================================
   const JobDetails = ({ job, onClose, onEdit, onDelete }) => {
     return (
       <div className="modal-overlay" onClick={onClose}>
@@ -559,14 +545,16 @@ const ListTodos = ({ type }) => {
     );
   };
 
-  // ============================================================
-  // MAIN RENDER
-  // ============================================================
+  const getContainerList = () => {
+    if (!editingJob?.containers) return [];
+    if (Array.isArray(editingJob.containers)) return editingJob.containers;
+    return editingJob.containers.split(', ').filter(c => c && c.trim() !== "");
+  };
+
   return (
     <div className="list-todos-container">
       <h2 className="dashboard-title">{type} Dashboard</h2>
 
-      {/* FILTER BAR - Only visible on ALL Dashboard */}
       {type === "ALL" && (
         <div className="filter-bar">
           <div className="search-group">
@@ -629,7 +617,6 @@ const ListTodos = ({ type }) => {
         </div>
       )}
 
-      {/* MAIN TABLE */}
       <div className="table-wrapper">
         <table className="data-table">
           <thead>
@@ -663,7 +650,6 @@ const ListTodos = ({ type }) => {
         </table>
       </div>
 
-      {/* DETAILS MODAL POPUP - Only appears when View Details is clicked on ALL Dashboard */}
       {viewingJob && (
         <JobDetails 
           job={viewingJob}
@@ -679,7 +665,6 @@ const ListTodos = ({ type }) => {
         />
       )}
 
-      {/* DELETE CONFIRMATION MODAL */}
       {showDeleteModal && (
         <div className="modal-overlay" onClick={cancelDelete}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -708,147 +693,148 @@ const ListTodos = ({ type }) => {
         </div>
       )}
 
-      {/* EDIT FORM MODAL - Shows when user clicks Edit on ALL Dashboard */}
       {editingJob && (
         <div className="edit-form">
           <h2>Edit Job Order</h2>
 
-          <input
-            type="text"
-            name="jo_number"
-            value={editingJob.jo_number || ""}
-            onChange={updateField}
-            placeholder="JO Number"
-          />
+          <div className="form-section">
+            <label>JO Number</label>
+            <input
+              type="text"
+              name="jo_number"
+              value={editingJob.jo_number || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="text"
-            name="shipper_name"
-            value={editingJob.shipper_name || ""}
-            onChange={updateField}
-            placeholder="Shipper Name"
-          />
+            <label>Shipper Name</label>
+            <input
+              type="text"
+              name="shipper_name"
+              value={editingJob.shipper_name || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="text"
-            name="consignee_name"
-            value={editingJob.consignee_name || ""}
-            onChange={updateField}
-            placeholder="Consignee Name"
-          />
+            <label>Consignee Name</label>
+            <input
+              type="text"
+              name="consignee_name"
+              value={editingJob.consignee_name || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="text"
-            name="volume"
-            value={editingJob.volume || ""}
-            onChange={updateField}
-            placeholder="Volume"
-          />
+            <label>Volume</label>
+            <input
+              type="text"
+              name="volume"
+              value={editingJob.volume || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="text"
-            name="shipping_line"
-            value={editingJob.shipping_line || ""}
-            onChange={updateField}
-            placeholder="Shipping Line"
-          />
+            <label>Shipping Line</label>
+            <input
+              type="text"
+              name="shipping_line"
+              value={editingJob.shipping_line || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="text"
-            name="vessel_name"
-            value={editingJob.vessel_name || ""}
-            onChange={updateField}
-            placeholder="Vessel Name"
-          />
+            <label>Vessel Name</label>
+            <input
+              type="text"
+              name="vessel_name"
+              value={editingJob.vessel_name || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="text"
-            name="port_of_loading"
-            value={editingJob.port_of_loading || ""}
-            onChange={updateField}
-            placeholder="Port of Loading"
-          />
+            <label>Port of Loading</label>
+            <input
+              type="text"
+              name="port_of_loading"
+              value={editingJob.port_of_loading || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="text"
-            name="port_of_discharge"
-            value={editingJob.port_of_discharge || ""}
-            onChange={updateField}
-            placeholder="Port of Discharge"
-          />
+            <label>Port of Discharge</label>
+            <input
+              type="text"
+              name="port_of_discharge"
+              value={editingJob.port_of_discharge || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="text"
-            name="person_in_charge"
-            value={editingJob.person_in_charge || ""}
-            onChange={updateField}
-            placeholder="Person In Charge"
-          />
+            <label>Person In Charge</label>
+            <input
+              type="text"
+              name="person_in_charge"
+              value={editingJob.person_in_charge || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="text"
-            name="aju_number"
-            value={editingJob.aju_number || ""}
-            onChange={updateField}
-            placeholder="AJU Number"
-          />
+            <label>AJU Number</label>
+            <input
+              type="text"
+              name="aju_number"
+              value={editingJob.aju_number || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="date"
-            name="loading_date"
-            value={editingJob.loading_date || ""}
-            onChange={updateField}
-            placeholder="Loading Date"
-          />
+            <label>Loading Date</label>
+            <input
+              type="date"
+              name="loading_date"
+              value={editingJob.loading_date || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="date"
-            name="eta"
-            value={editingJob.eta || ""}
-            onChange={updateField}
-            placeholder="ETA"
-          />
+            <label>ETA</label>
+            <input
+              type="date"
+              name="eta"
+              value={editingJob.eta || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="date"
-            name="etd"
-            value={editingJob.etd || ""}
-            onChange={updateField}
-            placeholder="ETD"
-          />
+            <label>ETD</label>
+            <input
+              type="date"
+              name="etd"
+              value={editingJob.etd || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="date"
-            name="sppb_date"
-            value={editingJob.sppb_date || ""}
-            onChange={updateField}
-            placeholder="SPPB Date"
-          />
+            <label>SPPB Date</label>
+            <input
+              type="date"
+              name="sppb_date"
+              value={editingJob.sppb_date || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="date"
-            name="dooring_date"
-            value={editingJob.dooring_date || ""}
-            onChange={updateField}
-            placeholder="Dooring Date"
-          />
+            <label>Dooring Date</label>
+            <input
+              type="date"
+              name="dooring_date"
+              value={editingJob.dooring_date || ""}
+              onChange={updateField}
+            />
 
-          <input
-            type="text"
-            name="goods"
-            value={editingJob.goods || ""}
-            onChange={updateField}
-            placeholder="Goods / Commodity"
-          />
+            <label>Goods / Commodity</label>
+            <input
+              type="text"
+              name="goods"
+              value={editingJob.goods || ""}
+              onChange={updateField}
+            />
 
-          <textarea
-            name="extra_note"
-            value={editingJob.extra_note || ""}
-            onChange={updateField}
-            placeholder="Extra Note"
-          />
+            <label>Extra Note</label>
+            <textarea
+              name="extra_note"
+              value={editingJob.extra_note || ""}
+              onChange={updateField}
+            />
+          </div>
 
-          <h3 style={{ marginTop: "10px", marginBottom: "10px" }}>Containers</h3>
+          <h3>Containers</h3>
           <div className="form-section">
             <div style={{ padding: "18px" }}>
               <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
