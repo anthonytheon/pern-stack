@@ -1,0 +1,119 @@
+/* Week Banner */
+.tv-week-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #00a8ff20, #00ff8820);
+  border: 1px solid rgba(0, 168, 255, 0.3);
+  border-radius: 60px;
+  padding: 12px 24px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tv-week-label {
+  background: #00a8ff;
+  color: white;
+  padding: 6px 18px;
+  border-radius: 40px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.tv-week-range {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.tv-no-data {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.tv-no-data h2 {
+  font-size: 32px;
+  margin-bottom: 16px;
+  color: white;
+}
+
+/* TV Play Controls */
+.tv-play-controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 60px;
+  backdrop-filter: blur(10px);
+}
+
+.tv-nav-btn {
+  background: #1a1f2e;
+  border: 1px solid #2a3042;
+  border-radius: 40px;
+  padding: 8px 24px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: auto;
+  transition: all 0.2s;
+}
+
+.tv-nav-btn:hover {
+  background: #2a3042;
+  transform: scale(1.02);
+}
+
+.tv-play-pause-btn {
+  border: none;
+  border-radius: 40px;
+  padding: 8px 32px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  width: auto;
+  transition: all 0.2s;
+}
+
+.tv-play-pause-btn.pause {
+  background: #ff385c;
+  color: white;
+}
+
+.tv-play-pause-btn.play {
+  background: #00ff88;
+  color: #222;
+}
+
+.tv-play-pause-btn:hover {
+  transform: scale(1.02);
+}
+
+/* Progress Bar */
+.tv-progress-container {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.tv-progress-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #00a8ff, #00ff88);
+  animation: tvProgressFill 10s linear infinite;
+  transform-origin: left;
+}
+
+@keyframes tvProgressFill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}

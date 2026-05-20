@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { API_BASE_URL } from '../config';
+const API_BASE_URL = 'http://192.168.100.67:5000';
 
 const InputTodo = () => {
   const [joType, setJoType] = useState("");
@@ -28,6 +28,16 @@ const InputTodo = () => {
   });
 
   const [containerInput, setContainerInput] = useState("");
+
+  // Auto-generate JO Number
+  const generateJoNumber = () => {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const random = Math.floor(Math.random() * 10000);
+    return `JO-${year}${month}${day}-${random}`;
+  };
 
   const addContainer = () => {
     if (containerInput.trim() !== "") {
@@ -59,9 +69,16 @@ const InputTodo = () => {
     e.preventDefault();
 
     try {
+      // Auto-generate JO Number if empty
+      let joNumber = formData.jo_number;
+      if (!joNumber || joNumber.trim() === "") {
+        joNumber = generateJoNumber();
+      }
+      
       const body = {
         jo_type: joType,
         ...formData,
+        jo_number: joNumber,
       };
 
       await fetch(`${API_BASE_URL}/job_orders`, {
@@ -103,14 +120,13 @@ const InputTodo = () => {
         <>
           <h3>Common Information</h3>
           <div className="form-section">
-            <label>JO Number *</label>
+            <label>JO Number (optional - auto-generated if empty)</label>
             <input
               type="text"
               name="jo_number"
-              placeholder="Enter JO Number"
+              placeholder="Leave empty to auto-generate"
               value={formData.jo_number}
               onChange={onChange}
-              required
             />
 
             <label>Shipper Name</label>

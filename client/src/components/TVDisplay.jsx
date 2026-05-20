@@ -1,60 +1,87 @@
 // ============================================================
-// TV DISPLAY - Airport Departure Screen Style
-// Full screen, large fonts, auto-pagination WITH SORTING & FILTERING
+// TV DISPLAY - Weekly Pagination by Date
+// EXPORT/DOMESTIC: Group by Loading Date
+// IMPORT: Group by ETA
+// WITH PLAY/PAUSE BUTTONS
 // ============================================================
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { API_BASE_URL } from '../config';
 
 const TVDisplay = ({ type }) => {
   const [jobOrders, setJobOrders] = useState([]);
-  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [weeklyGroups, setWeeklyGroups] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [rowsPerPage] = useState(15);
-  
-  // Sorting & Filtering states
-  const [sortField, setSortField] = useState("eta");
-  const [sortOrder, setSortOrder] = useState("ASC");
   const [searchTerm, setSearchTerm] = useState("");
   const [showControls, setShowControls] = useState(false);
   const [availableYears, setAvailableYears] = useState([]);
   const [selectedYear, setSelectedYear] = useState("");
+  const [isPlaying, setIsPlaying] = useState(true);
   
+  const pageIntervalRef = useRef(null);
 
-  // Fetch job orders
-  const getJobOrders = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      params.append("type", type);
-      
-      const url = `${API_BASE_URL}/job_orders${params.toString() ? `?${params.toString()}` : ""}`;
-      const response = await fetch(url);
-      const jsonData = await response.json();
-      setJobOrders(jsonData);
-      
-      // Extract unique years for filter
-      const years = new Set();
-      jsonData.forEach(job => {
-        if (job.eta) years.add(new Date(job.eta).getFullYear());
-        if (job.etd) years.add(new Date(job.etd).getFullYear());
-      });
-      setAvailableYears(Array.from(years).sort().reverse());
-      
-      setLoading(false);
-    } catch (error) {
-      console.error(error.message);
-      setLoading(false);
+  // Get the date field based on JO type
+  const getDateField = () => {
+    if (type === "EXPORT" || type === "DOMESTIC") {
+      return "loading_date";
     }
+    if (type === "IMPORT") {
+      return "eta";
+    }
+    return "loading_date";
   };
 
-  // Apply sorting and filtering
-  useEffect(() => {
-    let result = [...jobOrders];
+  // Get week range for a given date
+  const getWeekRange = (date) => {
+    const d = new Date(date);
+    const day = d.getDay();
+    const start = new Date(d);
+    const diff = (day === 0 ? 6 : day - 1);
+    start.setDate(d.getDate() - diff);
+    start.setHours(0, 0, 0, 0);
     
-    // Apply search filter
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    end.setHours(23, 59, 59, 999);
+    
+    return { start, end, label: `${start.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })} - ${end.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}` };
+  };
+
+  // Group jobs by week
+  const groupByWeek = (jobs, dateField) => {
+    const groups = new Map();
+    
+    jobs.forEach(job => {
+      const dateValue = job[dateField];
+      if (!dateValue) return;
+      
+      const date = new Date(dateValue);
+      const weekRange = getWeekRange(date);
+      const weekKey = weekRange.start.toISOString();
+      
+      if (!groups.has(weekKey)) {
+        groups.set(weekKey, {
+          weekLabel: weekRange.label,
+          startDate: weekRange.start,
+          endDate: weekRange.end,
+          jobs: []
+        });
+      }
+      groups.get(weekKey).jobs.push(job);
+    });
+    
+    const sortedGroups = Array.from(groups.values())
+      .sort((a, b) => b.startDate - a.startDate);
+    
+    return sortedGroups;
+  };
+
+  // Apply search and year filter to jobs
+  const filterJobs = (jobs) => {
+    let result = [...jobs];
+    
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       result = result.filter(job => {
@@ -69,84 +96,96 @@ const TVDisplay = ({ type }) => {
       });
     }
     
-    // Apply year filter
     if (selectedYear) {
+      const dateField = getDateField();
       result = result.filter(job => {
-        const etaYear = job.eta ? new Date(job.eta).getFullYear().toString() : "";
-        const etdYear = job.etd ? new Date(job.etd).getFullYear().toString() : "";
-        return etaYear === selectedYear || etdYear === selectedYear;
+        const dateValue = job[dateField];
+        return dateValue && new Date(dateValue).getFullYear().toString() === selectedYear;
       });
     }
     
-    // Apply sorting
-    result.sort((a, b) => {
-      let valA = a[sortField];
-      let valB = b[sortField];
+    return result;
+  };
+
+  // Fetch job orders
+  const getJobOrders = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.append("type", type);
       
-      if (sortField === "eta" || sortField === "etd" || sortField === "loading_date" || sortField === "closing_date") {
-        valA = valA ? new Date(valA) : new Date(0);
-        valB = valB ? new Date(valB) : new Date(0);
-      } else {
-        valA = (valA || "").toLowerCase();
-        valB = (valB || "").toLowerCase();
-      }
+      const url = `${API_BASE_URL}/job_orders${params.toString() ? `?${params.toString()}` : ""}`;
+      const response = await fetch(url);
+      let jsonData = await response.json();
       
-      if (valA < valB) return sortOrder === "ASC" ? -1 : 1;
-      if (valA > valB) return sortOrder === "ASC" ? 1 : -1;
-      return 0;
-    });
-    
-    setFilteredOrders(result);
-    setCurrentPage(0);
-  }, [jobOrders, searchTerm, selectedYear, sortField, sortOrder]);
-
-  // Calculate total pages
-  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / rowsPerPage));
-  const startIndex = currentPage * rowsPerPage;
-  const currentJobs = filteredOrders.slice(startIndex, startIndex + rowsPerPage);
-
-  // Auto-rotate pages every 10 seconds
-  useEffect(() => {
-    getJobOrders();
-    
-    const timeInterval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-    
-    return () => clearInterval(timeInterval);
-  }, [type]);
-
-  // Handle page rotation
-  useEffect(() => {
-    if (filteredOrders.length === 0) return;
-    
-    const pageInterval = setInterval(() => {
-      setCurrentPage((prev) => (prev + 1) % totalPages);
-    }, 10000);
-    
-    return () => clearInterval(pageInterval);
-  }, [filteredOrders.length, totalPages]);
-
-  // Reset page when type changes
-  useEffect(() => {
-    setCurrentPage(0);
-    setSearchTerm("");
-    setSelectedYear("");
-    setSortField("eta");
-    setSortOrder("ASC");
-  }, [type]);
-
-  // Handle sort click
-  const handleSort = (field) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC");
-    } else {
-      setSortField(field);
-      setSortOrder("ASC");
+      jsonData = filterJobs(jsonData);
+      
+      const dateField = getDateField();
+      const grouped = groupByWeek(jsonData, dateField);
+      setWeeklyGroups(grouped);
+      
+      const years = new Set();
+      jsonData.forEach(job => {
+        const dateField = getDateField();
+        const dateValue = job[dateField];
+        if (dateValue) years.add(new Date(dateValue).getFullYear());
+      });
+      setAvailableYears(Array.from(years).sort().reverse());
+      
+      setLoading(false);
+    } catch (error) {
+      console.error(error.message);
+      setLoading(false);
     }
   };
 
-  // Format date for display
+  // Auto-rotate pages
+  useEffect(() => {
+    if (!isPlaying) return;
+    if (weeklyGroups.length === 0) return;
+    
+    if (pageIntervalRef.current) clearInterval(pageIntervalRef.current);
+    
+    pageIntervalRef.current = setInterval(() => {
+      setCurrentPage((prev) => (prev + 1) % weeklyGroups.length);
+    }, 10000);
+    
+    return () => {
+      if (pageIntervalRef.current) clearInterval(pageIntervalRef.current);
+    };
+  }, [isPlaying, weeklyGroups.length]);
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    getJobOrders();
+    setCurrentPage(0);
+    setIsPlaying(true);
+  }, [type, searchTerm, selectedYear]);
+
+  // Update time every second
+  useEffect(() => {
+    const timeInterval = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timeInterval);
+  }, []);
+
+  // Manual navigation
+  const goToPreviousWeek = () => {
+    if (weeklyGroups.length === 0) return;
+    setCurrentPage((prev) => (prev - 1 + weeklyGroups.length) % weeklyGroups.length);
+  };
+
+  const goToNextWeek = () => {
+    if (weeklyGroups.length === 0) return;
+    setCurrentPage((prev) => (prev + 1) % weeklyGroups.length);
+  };
+
+  const togglePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const currentGroup = weeklyGroups[currentPage];
+  const currentJobs = currentGroup?.jobs || [];
+
   const formatDisplayDate = (dateString) => {
     if (!dateString) return "-";
     const date = new Date(dateString);
@@ -156,17 +195,7 @@ const TVDisplay = ({ type }) => {
     });
   };
 
-  // Get sort icon
-  const getSortIcon = (field) => {
-    if (sortField !== field) return "↕️";
-    return sortOrder === "ASC" ? "↑" : "↓";
-  };
-
-  // ============================================================
-  // EXPORT & DOMESTIC - Column Order:
-  // Shipper Name -> Volume -> Loading Date -> Closing Date -> 
-  // ETD from SBY -> ETA Port of Discharge -> Vessel Name -> Shipping Line
-  // ============================================================
+  // EXPORT & DOMESTIC headers
   const getExportDomesticHeaders = () => {
     return [
       { key: "shipper_name", label: "SHIPPER NAME" },
@@ -193,11 +222,7 @@ const TVDisplay = ({ type }) => {
     ];
   };
 
-  // ============================================================
-  // IMPORT - Column Order:
-  // JO Number -> Consignee Name -> Volume -> AJU Number -> 
-  // Shipping Line -> ETA Surabaya
-  // ============================================================
+  // IMPORT headers
   const getImportHeaders = () => {
     return [
       { key: "jo_number", label: "JO NUMBER" },
@@ -220,7 +245,6 @@ const TVDisplay = ({ type }) => {
     ];
   };
 
-  // Get headers and row data based on type
   const getHeaders = () => {
     if (type === "EXPORT" || type === "DOMESTIC") {
       return getExportDomesticHeaders();
@@ -250,6 +274,32 @@ const TVDisplay = ({ type }) => {
     );
   }
 
+  if (weeklyGroups.length === 0) {
+    return (
+      <div className="tv-container">
+        <div className="tv-header">
+          <div className="tv-title">
+            <h1>GST JOB ORDER SYSTEM</h1>
+            <h2>{type} DASHBOARD</h2>
+          </div>
+          <div className="tv-datetime">
+            <div className="tv-time">{currentTime.toLocaleTimeString('en-GB')}</div>
+            <div className="tv-date">{currentTime.toLocaleDateString('en-GB', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}</div>
+          </div>
+        </div>
+        <div className="tv-no-data">
+          <h2>No data found for {type}</h2>
+          <p>Try adjusting your search or filters</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div 
       className="tv-container"
@@ -273,7 +323,7 @@ const TVDisplay = ({ type }) => {
         </div>
       </div>
 
-      {/* Hidden Controls - Appears on hover */}
+      {/* Hidden Controls */}
       {showControls && (
         <div className="tv-controls-panel">
           <div className="tv-search">
@@ -304,8 +354,6 @@ const TVDisplay = ({ type }) => {
             <button className="tv-reset-btn" onClick={() => {
               setSearchTerm("");
               setSelectedYear("");
-              setSortField("eta");
-              setSortOrder("ASC");
             }}>
               Reset Filters
             </button>
@@ -313,11 +361,32 @@ const TVDisplay = ({ type }) => {
         </div>
       )}
 
-      {/* Page Info */}
-      <div className="tv-page-info">
-        <span className="tv-page-badge">PAGE {currentPage + 1} OF {totalPages}</span>
-        <span className="tv-record-count">{filteredOrders.length} RECORDS FOUND</span>
+      {/* Play/Pause and Navigation Controls - Always visible at top */}
+      <div className="tv-play-controls">
+        <button onClick={goToPreviousWeek} className="tv-nav-btn" title="Previous Week">
+          ◀ PREV WEEK
+        </button>
+        <button onClick={togglePlayPause} className={`tv-play-pause-btn ${isPlaying ? 'pause' : 'play'}`}>
+          {isPlaying ? "⏸ PAUSE" : "▶ PLAY"}
+        </button>
+        <button onClick={goToNextWeek} className="tv-nav-btn" title="Next Week">
+          NEXT WEEK ▶
+        </button>
       </div>
+
+      {/* Week Info Banner */}
+      <div className="tv-week-banner">
+        <span className="tv-week-label">📅 WEEK {currentPage + 1} OF {weeklyGroups.length}</span>
+        <span className="tv-week-range">{currentGroup.weekLabel}</span>
+        <span className="tv-record-count">{currentJobs.length} SHIPMENTS</span>
+      </div>
+
+      {/* Progress Bar (only when playing) */}
+      {isPlaying && (
+        <div className="tv-progress-container">
+          <div className="tv-progress-bar"></div>
+        </div>
+      )}
 
       {/* Main Table */}
       <div className="tv-table-wrapper">
@@ -325,8 +394,8 @@ const TVDisplay = ({ type }) => {
           <thead>
             <tr>
               {getHeaders().map((header) => (
-                <th key={header.key} onClick={() => handleSort(header.key)} style={{ cursor: "pointer" }}>
-                  {header.label} <span className="tv-sort-icon">{getSortIcon(header.key)}</span>
+                <th key={header.key}>
+                  {header.label}
                 </th>
               ))}
             </tr>
@@ -339,28 +408,17 @@ const TVDisplay = ({ type }) => {
                 ))}
               </tr>
             ))}
-            {/* Fill empty rows */}
-            {Array.from({ length: rowsPerPage - currentJobs.length }).map((_, idx) => (
-              <tr key={`empty-${idx}`} className="tv-row-empty">
-                {getHeaders().map((_, headerIdx) => (
-                  <td key={headerIdx}>—</td>
-                ))}
-              </tr>
-            ))}
           </tbody>
         </table>
       </div>
 
-      {/* Footer with progress bar */}
+      {/* Footer */}
       <div className="tv-footer">
-        <div className="tv-progress-container">
-          <div className="tv-progress-bar"></div>
-        </div>
         <div className="tv-footer-text">
-          <span>🚢 NEXT PAGE IN</span>
-          <span className="tv-footer-bold">10 SECONDS</span>
-          <span>📦 AUTO REFRESH</span>
-          <span>⬆️ CLICK COLUMN HEADERS TO SORT</span>
+          <span>🚢 {isPlaying ? "AUTO-ROTATING" : "PAUSED"}</span>
+          <span className="tv-footer-bold">{isPlaying ? "NEXT WEEK IN" : "MANUAL MODE"}</span>
+          <span>📅 {type === "IMPORT" ? "ETA" : "LOADING DATE"} WEEKLY VIEW</span>
+          <span>⬆️ HOVER FOR SEARCH</span>
         </div>
       </div>
     </div>
