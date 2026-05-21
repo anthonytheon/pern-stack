@@ -135,6 +135,8 @@ thead {
   background-color: #fafafa;
 }
 
+
+
 th {
   text-align: left;
   padding: 18px 16px;
@@ -848,6 +850,8 @@ label {
 
 /* Table Wrapper with transition */
 .tv-table-wrapper {
+  max-height: calc(100vh - 260px);
+  overflow-y: auto;
   flex: 1;
   overflow-x: auto;
   margin-bottom: 24px;
@@ -855,6 +859,13 @@ label {
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.05);
   transition: all 0.3s ease;
+}
+
+.tv-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #111827; /* match your table header color */
 }
 
 /* Table rows fade in animation */

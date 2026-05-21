@@ -188,7 +188,7 @@ const ListTodos = ({ type }) => {
   };
 
   const getSortIcon = (field) => {
-    if (sortField !== field) return "↕️";
+    if (sortField !== field) return "↑";
     return sortOrder === "ASC" ? "↑" : "↓";
   };
 
