@@ -226,7 +226,7 @@ const ListTodos = ({ type }) => {
           <th onClick={() => handleSort("loading_date")}>Loading Date {getSortIcon("loading_date")}</th>
           <th onClick={() => handleSort("shipper_name")}>Shipper Name {getSortIcon("shipper_name")}</th>
           <th onClick={() => handleSort("volume")}>Volume {getSortIcon("volume")}</th>
-          <th onClick={() => handleSort("port_of_loading")}>Port of Loading {getSortIcon("port_of_loading")}</th>
+          <th onClick={() => handleSort("port_of_discharge")}>Port of Discharge {getSortIcon("port_of_discharge")}</th>
           <th onClick={() => handleSort("aju_number")}>AJU Number {getSortIcon("aju_number")}</th>
           <th onClick={() => handleSort("shipping_line")}>Shipping Line {getSortIcon("shipping_line")}</th>
           <th>View Details</th>
@@ -240,7 +240,7 @@ const ListTodos = ({ type }) => {
           <th onClick={() => handleSort("consignee_name")}>Consignee Name {getSortIcon("consignee_name")}</th>
           <th onClick={() => handleSort("aju_number")}>AJU Number {getSortIcon("aju_number")}</th>
           <th onClick={() => handleSort("volume")}>Volume {getSortIcon("volume")}</th>
-          <th onClick={() => handleSort("port_of_discharge")}>Port of Discharge {getSortIcon("port_of_discharge")}</th>
+          <th onClick={() => handleSort("port_of_loading")}>Port of Loading {getSortIcon("port_of_loading")}</th>
           <th onClick={() => handleSort("etd")}>ETD {getSortIcon("etd")}</th>
           <th onClick={() => handleSort("eta")}>ETA {getSortIcon("eta")}</th>
           <th onClick={() => handleSort("sppb_date")}>SPPB Date {getSortIcon("sppb_date")}</th>
@@ -257,7 +257,7 @@ const ListTodos = ({ type }) => {
           <th onClick={() => handleSort("loading_date")}>Loading Date {getSortIcon("loading_date")}</th>
           <th onClick={() => handleSort("shipper_name")}>Shipper Name {getSortIcon("shipper_name")}</th>
           <th onClick={() => handleSort("volume")}>Volume {getSortIcon("volume")}</th>
-          <th onClick={() => handleSort("port_of_loading")}>Port of Loading {getSortIcon("port_of_loading")}</th>
+          <th onClick={() => handleSort("port_of_discharge")}>Port of Discharge {getSortIcon("port_of_discharge")}</th>
           <th onClick={() => handleSort("shipping_line")}>Shipping Line {getSortIcon("shipping_line")}</th>
           <th>View Details</th>
         </tr>
@@ -270,10 +270,10 @@ const ListTodos = ({ type }) => {
         <th onClick={() => handleSort("jo_number")}>JO Number {getSortIcon("jo_number")}</th>
         <th onClick={() => handleSort("loading_date")}>Loading Date {getSortIcon("loading_date")}</th>
         <th onClick={() => handleSort("shipper_name")}>Shipper Name {getSortIcon("shipper_name")}</th>
+        <th onClick={() => handleSort("consignee_name")}>Consignee Name {getSortIcon("consignee_name")}</th>
         <th onClick={() => handleSort("aju_number")}>AJU Number {getSortIcon("aju_number")}</th>
         <th onClick={() => handleSort("volume")}>Volume {getSortIcon("volume")}</th>
         <th onClick={() => handleSort("port_of_loading")}>Port of Loading {getSortIcon("port_of_loading")}</th>
-        <th onClick={() => handleSort("consignee_name")}>Consignee Name {getSortIcon("consignee_name")}</th>
         <th onClick={() => handleSort("port_of_discharge")}>Port of Discharge {getSortIcon("port_of_discharge")}</th>
         <th onClick={() => handleSort("etd")}>ETD {getSortIcon("etd")}</th>
         <th onClick={() => handleSort("eta")}>ETA {getSortIcon("eta")}</th>
@@ -290,7 +290,7 @@ const ListTodos = ({ type }) => {
           <td>{formatDate(job.loading_date)}</td>
           <td>{job.shipper_name}</td>
           <td>{job.volume}</td>
-          <td>{job.port_of_loading}</td>
+          <td>{job.port_of_discharge}</td>
           <td>{job.aju_number}</td>
           <td>{job.shipping_line || "-"}</td>
           <td><button className="view-btn" onClick={() => setViewingJob(job)}>View Details</button></td>
@@ -304,7 +304,7 @@ const ListTodos = ({ type }) => {
           <td>{job.consignee_name}</td>
           <td>{job.aju_number}</td>
           <td>{job.volume}</td>
-          <td>{job.port_of_discharge}</td>
+          <td>{job.port_of_loading}</td>
           <td>{formatDate(job.etd)}</td>
           <td>{formatDate(job.eta)}</td>
           <td>{formatDate(job.sppb_date)}</td>

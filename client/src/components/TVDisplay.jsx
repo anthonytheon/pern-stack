@@ -119,6 +119,7 @@ const TVDisplay = ({ type }) => {
       return [
         { key: "shipper_name", label: "SHIPPER NAME" },
         { key: "volume", label: "VOLUME" },
+        { key: "port_of_discharge", label: "PORT OF DISCHARGE" },
         { key: "person_in_charge", label: "PERSON IN CHARGE" },
         { key: "loading_date", label: "LOADING DATE" },
         { key: "closing_date", label: "CLOSING DATE" },
@@ -134,6 +135,7 @@ const TVDisplay = ({ type }) => {
       { key: "consignee_name", label: "CONSIGNEE" },
       { key: "person_in_charge", label: "PERSON IN CHARGE" },
       { key: "volume", label: "VOLUME" },
+      { key: "port_of_loading", label: "PORT OF LOADING" },
       { key: "aju_number", label: "AJU" },
       { key: "shipping_line", label: "SHIPPING LINE" },
       { key: "eta", label: "ETA SURABAYA" }
@@ -145,6 +147,7 @@ const TVDisplay = ({ type }) => {
       return [
         job.shipper_name || "-",
         job.volume || "-",
+        job.port_of_discharge || "-",
         job.person_in_charge || "-",
         formatDate(job.loading_date),
         formatDate(job.closing_date),
@@ -160,6 +163,7 @@ const TVDisplay = ({ type }) => {
       job.consignee_name || "-",
       job.person_in_charge || "-",
       job.volume || "-",
+      job.port_of_loading || "-",
       job.aju_number || "-",
       job.shipping_line || "-",
       formatDate(job.eta)
