@@ -85,17 +85,30 @@ const ListTodos = ({ type }) => {
   };
 
   const handleDelete = async () => {
-    if (!jobToDelete) return;
+  if (!jobToDelete) return;
     try {
-      await fetch(`${API_BASE_URL}/job_orders/${jobToDelete.job_order_id}`, {
+      const token = sessionStorage.getItem("token");
+
+      const response = await fetch(`${API_BASE_URL}/job_orders/${jobToDelete.job_order_id}`, {
         method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+
+      if (!response.ok) {
+        const data = await response.json();
+        alert(data.error || "Failed to delete job order");
+        return;
+      }
+
       setShowDeleteModal(false);
       setJobToDelete(null);
       setViewingJob(null);
       getJobOrders();
     } catch (error) {
       console.error(error.message);
+      alert("Cannot connect to server");
     }
   };
 
@@ -135,20 +148,34 @@ const ListTodos = ({ type }) => {
   };
 
   const updateJobOrder = async () => {
-    try {
-      const containersArray = getContainersArray(editingJob.containers);
-      const jobToUpdate = { ...editingJob, containers: containersArray };
-      await fetch(`${API_BASE_URL}/job_orders/${editingJob.job_order_id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(jobToUpdate),
-      });
-      setEditingJob(null);
-      getJobOrders();
-    } catch (error) {
-      console.error(error.message);
+  try {
+    const token = sessionStorage.getItem("token");
+
+    const containersArray = getContainersArray(editingJob.containers);
+    const jobToUpdate = { ...editingJob, containers: containersArray };
+
+    const response = await fetch(`${API_BASE_URL}/job_orders/${editingJob.job_order_id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(jobToUpdate),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      alert(data.error || "Failed to update job order");
+      return;
     }
-  };
+
+    setEditingJob(null);
+    getJobOrders();
+  } catch (error) {
+    console.error(error.message);
+    alert("Cannot connect to server");
+  }
+};
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
