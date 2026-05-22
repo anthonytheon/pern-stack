@@ -622,7 +622,9 @@ app.get("/admin/test", authenticateUser, requireAdmin, async (req, res) => {
 // SERVE STATIC FILES
 // =========================
 
-const distPath = path.join(__dirname, "dist");
+const distPath = process.pkg
+  ? path.join(path.dirname(process.execPath), "dist")
+  : path.join(__dirname, "dist");
 
 if (fs.existsSync(distPath)) {
   console.log("Serving React frontend from:", distPath);
