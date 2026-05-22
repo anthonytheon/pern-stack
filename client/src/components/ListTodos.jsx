@@ -334,10 +334,10 @@ const ListTodos = ({ type }) => {
         <td>{job.jo_number}</td>
         <td>{formatDate(job.loading_date)}</td>
         <td>{job.shipper_name}</td>
+        <td>{job.consignee_name}</td>
         <td>{job.aju_number}</td>
         <td>{job.volume}</td>
         <td>{job.port_of_loading}</td>
-        <td>{job.consignee_name}</td>
         <td>{job.port_of_discharge}</td>
         <td>{formatDate(job.etd)}</td>
         <td>{formatDate(job.eta)}</td>
