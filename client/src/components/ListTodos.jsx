@@ -223,6 +223,7 @@ const ListTodos = ({ type }) => {
     if (type === "EXPORT") {
       return (
         <tr>
+          <th onClick={() => handleSort("jo_number")}>JO Number {getSortIcon("jo_number")}</th>
           <th onClick={() => handleSort("loading_date")}>Loading Date {getSortIcon("loading_date")}</th>
           <th onClick={() => handleSort("shipper_name")}>Shipper Name {getSortIcon("shipper_name")}</th>
           <th onClick={() => handleSort("volume")}>Volume {getSortIcon("volume")}</th>
@@ -237,6 +238,7 @@ const ListTodos = ({ type }) => {
     if (type === "IMPORT") {
       return (
         <tr>
+          <th onClick={() => handleSort("jo_number")}>JO Number {getSortIcon("jo_number")}</th>
           <th onClick={() => handleSort("consignee_name")}>Consignee Name {getSortIcon("consignee_name")}</th>
           <th onClick={() => handleSort("aju_number")}>AJU Number {getSortIcon("aju_number")}</th>
           <th onClick={() => handleSort("volume")}>Volume {getSortIcon("volume")}</th>
@@ -254,6 +256,7 @@ const ListTodos = ({ type }) => {
     if (type === "DOMESTIC") {
       return (
         <tr>
+          <th onClick={() => handleSort("jo_number")}>JO Number {getSortIcon("jo_number")}</th>
           <th onClick={() => handleSort("loading_date")}>Loading Date {getSortIcon("loading_date")}</th>
           <th onClick={() => handleSort("shipper_name")}>Shipper Name {getSortIcon("shipper_name")}</th>
           <th onClick={() => handleSort("volume")}>Volume {getSortIcon("volume")}</th>
@@ -287,6 +290,7 @@ const ListTodos = ({ type }) => {
     if (type === "EXPORT") {
       return (
         <tr key={job.job_order_id}>
+          <td>{job.jo_number}</td>
           <td>{formatDate(job.loading_date)}</td>
           <td>{job.shipper_name}</td>
           <td>{job.volume}</td>
@@ -301,6 +305,7 @@ const ListTodos = ({ type }) => {
     if (type === "IMPORT") {
       return (
         <tr key={job.job_order_id}>
+          <td>{job.jo_number}</td>
           <td>{job.consignee_name}</td>
           <td>{job.aju_number}</td>
           <td>{job.volume}</td>
@@ -318,6 +323,7 @@ const ListTodos = ({ type }) => {
     if (type === "DOMESTIC") {
       return (
         <tr key={job.job_order_id}>
+          <td>{job.jo_number}</td>
           <td>{formatDate(job.loading_date)}</td>
           <td>{job.shipper_name}</td>
           <td>{job.volume}</td>
