@@ -85,7 +85,7 @@ const ListTodos = ({ type }) => {
   };
 
   const handleDelete = async () => {
-  if (!jobToDelete) return;
+    if (!jobToDelete) return;
     try {
       const token = sessionStorage.getItem("token");
 
@@ -148,34 +148,34 @@ const ListTodos = ({ type }) => {
   };
 
   const updateJobOrder = async () => {
-  try {
-    const token = sessionStorage.getItem("token");
+    try {
+      const token = sessionStorage.getItem("token");
 
-    const containersArray = getContainersArray(editingJob.containers);
-    const jobToUpdate = { ...editingJob, containers: containersArray };
+      const containersArray = getContainersArray(editingJob.containers);
+      const jobToUpdate = { ...editingJob, containers: containersArray };
 
-    const response = await fetch(`${API_BASE_URL}/job_orders/${editingJob.job_order_id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(jobToUpdate),
-    });
+      const response = await fetch(`${API_BASE_URL}/job_orders/${editingJob.job_order_id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(jobToUpdate),
+      });
 
-    if (!response.ok) {
-      const data = await response.json();
-      alert(data.error || "Failed to update job order");
-      return;
+      if (!response.ok) {
+        const data = await response.json();
+        alert(data.error || "Failed to update job order");
+        return;
+      }
+
+      setEditingJob(null);
+      getJobOrders();
+    } catch (error) {
+      console.error(error.message);
+      alert("Cannot connect to server");
     }
-
-    setEditingJob(null);
-    getJobOrders();
-  } catch (error) {
-    console.error(error.message);
-    alert("Cannot connect to server");
-  }
-};
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
@@ -224,7 +224,7 @@ const ListTodos = ({ type }) => {
       return (
         <tr>
           <th onClick={() => handleSort("jo_number")}>JO Number {getSortIcon("jo_number")}</th>
-          <th onClick={() => handleSort("loading_date")}>Loading Date {getSortIcon("loading_date")}</th>
+          <th onClick={() => handleSort("loading_date")}>Stuffing Date {getSortIcon("loading_date")}</th>
           <th onClick={() => handleSort("shipper_name")}>Shipper Name {getSortIcon("shipper_name")}</th>
           <th onClick={() => handleSort("volume")}>Volume {getSortIcon("volume")}</th>
           <th onClick={() => handleSort("port_of_discharge")}>Port of Discharge {getSortIcon("port_of_discharge")}</th>
@@ -257,7 +257,7 @@ const ListTodos = ({ type }) => {
       return (
         <tr>
           <th onClick={() => handleSort("jo_number")}>JO Number {getSortIcon("jo_number")}</th>
-          <th onClick={() => handleSort("loading_date")}>Loading Date {getSortIcon("loading_date")}</th>
+          <th onClick={() => handleSort("loading_date")}>Stuffing Date {getSortIcon("loading_date")}</th>
           <th onClick={() => handleSort("shipper_name")}>Shipper Name {getSortIcon("shipper_name")}</th>
           <th onClick={() => handleSort("volume")}>Volume {getSortIcon("volume")}</th>
           <th onClick={() => handleSort("port_of_discharge")}>Port of Discharge {getSortIcon("port_of_discharge")}</th>
@@ -271,7 +271,7 @@ const ListTodos = ({ type }) => {
     return (
       <tr>
         <th onClick={() => handleSort("jo_number")}>JO Number {getSortIcon("jo_number")}</th>
-        <th onClick={() => handleSort("loading_date")}>Loading Date {getSortIcon("loading_date")}</th>
+        <th onClick={() => handleSort("loading_date")}>Stuffing Date {getSortIcon("loading_date")}</th>
         <th onClick={() => handleSort("shipper_name")}>Shipper Name {getSortIcon("shipper_name")}</th>
         <th onClick={() => handleSort("consignee_name")}>Consignee Name {getSortIcon("consignee_name")}</th>
         <th onClick={() => handleSort("aju_number")}>AJU Number {getSortIcon("aju_number")}</th>
@@ -281,6 +281,7 @@ const ListTodos = ({ type }) => {
         <th onClick={() => handleSort("etd")}>ETD {getSortIcon("etd")}</th>
         <th onClick={() => handleSort("eta")}>ETA {getSortIcon("eta")}</th>
         <th onClick={() => handleSort("shipping_line")}>Shipping Line {getSortIcon("shipping_line")}</th>
+        <th onClick={() => handleSort("created_at")}>Created At {getSortIcon("created_at")}</th>
         <th>View Details</th>
       </tr>
     );
@@ -348,6 +349,7 @@ const ListTodos = ({ type }) => {
         <td>{formatDate(job.etd)}</td>
         <td>{formatDate(job.eta)}</td>
         <td>{job.shipping_line || "-"}</td>
+        <td>{formatDate(job.created_at)}</td>
         <td><button className="view-btn" onClick={() => setViewingJob(job)}>View Details</button></td>
       </tr>
     );
@@ -377,17 +379,28 @@ const ListTodos = ({ type }) => {
                 <div className="details-item"><label>Person In Charge:</label><span>{job.person_in_charge || "-"}</span></div>
                 <div className="details-item"><label>AJU Number:</label><span>{job.aju_number || "-"}</span></div>
                 <div className="details-item"><label>Goods:</label><span>{job.goods || "-"}</span></div>
+                <div className="details-item"><label>Created At:</label><span>{formatDate(job.created_at)}</span></div>
               </div>
             </div>
             <div className="details-section">
               <h3>Dates</h3>
               <div className="details-grid">
-                <div className="details-item"><label>ETA:</label><span>{formatDateFull(job.eta)}</span></div>
-                <div className="details-item"><label>ETD:</label><span>{formatDateFull(job.etd)}</span></div>
-                <div className="details-item"><label>Loading Date:</label><span>{formatDateFull(job.loading_date)}</span></div>
-                <div className="details-item"><label>Closing Date:</label><span>{formatDateFull(job.closing_date)}</span></div>
-                <div className="details-item"><label>SPPB Date:</label><span>{formatDateFull(job.sppb_date)}</span></div>
-                <div className="details-item"><label>Dooring Date:</label><span>{formatDateFull(job.dooring_date)}</span></div>
+                {(job.jo_type === "EXPORT" || job.jo_type === "DOMESTIC") && (
+                  <>
+                    <div className="details-item"><label>Stuffing Date:</label><span>{formatDateFull(job.loading_date)}</span></div>
+                    <div className="details-item"><label>Closing Date:</label><span>{formatDateFull(job.closing_date)}</span></div>
+                    <div className="details-item"><label>ETD Date:</label><span>{formatDateFull(job.etd)}</span></div>
+                    <div className="details-item"><label>ETA Date:</label><span>{formatDateFull(job.eta)}</span></div>
+                  </>
+                )}
+                {job.jo_type === "IMPORT" && (
+                  <>
+                    <div className="details-item"><label>ETA Date:</label><span>{formatDateFull(job.eta)}</span></div>
+                    <div className="details-item"><label>ETD Date:</label><span>{formatDateFull(job.etd)}</span></div>
+                    <div className="details-item"><label>SPPB Date:</label><span>{formatDateFull(job.sppb_date)}</span></div>
+                    <div className="details-item"><label>Dooring Date:</label><span>{formatDateFull(job.dooring_date)}</span></div>
+                  </>
+                )}
               </div>
             </div>
             <div className="details-section">
@@ -480,63 +493,56 @@ const ListTodos = ({ type }) => {
         </table>
       </div>
 
-  {/* Pagination */}
-  {totalPages > 1 && (
-  <div className="pagination-container">
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="pagination-container">
+          <div className="pagination-info">
+            Showing {startIndex + 1}-
+            {Math.min(startIndex + rowsPerPage, jobOrders.length)} of{" "}
+            {jobOrders.length} results
+          </div>
 
-    <div className="pagination-info">
-      Showing {startIndex + 1}-
-      {Math.min(startIndex + rowsPerPage, jobOrders.length)} of{" "}
-      {jobOrders.length} results
-    </div>
+          <div className="pagination-controls">
+            <button
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="pagination-btn"
+            >
+              Previous
+            </button>
 
-    <div className="pagination-controls">
-      <button
-        onClick={() => goToPage(currentPage - 1)}
-        disabled={currentPage === 1}
-        className="pagination-btn"
-      >
-        Previous
-      </button>
+            {getPageNumbers().map((page) => (
+              <button
+                key={page}
+                onClick={() => goToPage(page)}
+                className={`pagination-btn ${
+                  currentPage === page ? "active" : ""
+                }`}
+              >
+                {page}
+              </button>
+            ))}
 
-      {getPageNumbers().map((page) => (
-        <button
-          key={page}
-          onClick={() => goToPage(page)}
-          className={`pagination-btn ${
-            currentPage === page ? "active" : ""
-          }`}
-        >
-          {page}
-        </button>
-      ))}
+            <button
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="pagination-btn"
+            >
+              Next
+            </button>
+          </div>
 
-      <button
-        onClick={() => goToPage(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className="pagination-btn"
-      >
-        Next
-      </button>
-    </div>
-
-    <div className="rows-per-page">
-      <span>Rows:</span>
-
-      <select
-        value={rowsPerPage}
-        onChange={handleRowsPerPageChange}
-      >
-        <option value={5}>5</option>
-        <option value={10}>10</option>
-        <option value={25}>25</option>
-        <option value={50}>50</option>
-      </select>
-    </div>
-
-  </div>
-)}
-
+          <div className="rows-per-page">
+            <span>Rows:</span>
+            <select value={rowsPerPage} onChange={handleRowsPerPageChange}>
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
+          </div>
+        </div>
+      )}
 
       {viewingJob && (
         <JobDetails
@@ -579,39 +585,75 @@ const ListTodos = ({ type }) => {
           <div className="form-section">
             <label>JO Number</label>
             <input type="text" name="jo_number" value={editingJob.jo_number || ""} onChange={updateField} />
+
             <label>Shipper Name</label>
             <input type="text" name="shipper_name" value={editingJob.shipper_name || ""} onChange={updateField} />
+
             <label>Consignee Name</label>
             <input type="text" name="consignee_name" value={editingJob.consignee_name || ""} onChange={updateField} />
+
             <label>Volume</label>
             <input type="text" name="volume" value={editingJob.volume || ""} onChange={updateField} />
+
             <label>Shipping Line</label>
             <input type="text" name="shipping_line" value={editingJob.shipping_line || ""} onChange={updateField} />
+
             <label>Vessel Name</label>
             <input type="text" name="vessel_name" value={editingJob.vessel_name || ""} onChange={updateField} />
+
             <label>Port of Loading</label>
             <input type="text" name="port_of_loading" value={editingJob.port_of_loading || ""} onChange={updateField} />
+
             <label>Port of Discharge</label>
             <input type="text" name="port_of_discharge" value={editingJob.port_of_discharge || ""} onChange={updateField} />
+
             <label>Person In Charge</label>
             <input type="text" name="person_in_charge" value={editingJob.person_in_charge || ""} onChange={updateField} />
+
             <label>AJU Number</label>
             <input type="text" name="aju_number" value={editingJob.aju_number || ""} onChange={updateField} />
-            <label>Loading Date</label>
-            <input type="date" name="loading_date" value={editingJob.loading_date || ""} onChange={updateField} />
-            <label>ETA</label>
-            <input type="date" name="eta" value={editingJob.eta || ""} onChange={updateField} />
-            <label>ETD</label>
-            <input type="date" name="etd" value={editingJob.etd || ""} onChange={updateField} />
-            <label>SPPB Date</label>
-            <input type="date" name="sppb_date" value={editingJob.sppb_date || ""} onChange={updateField} />
-            <label>Dooring Date</label>
-            <input type="date" name="dooring_date" value={editingJob.dooring_date || ""} onChange={updateField} />
+
+            {/* Date Fields - Reordered for EXPORT/DOMESTIC */}
+            {(editingJob.jo_type === "EXPORT" || editingJob.jo_type === "DOMESTIC") && (
+              <>
+                <label>Stuffing Date</label>
+                <input type="date" name="loading_date" value={editingJob.loading_date || ""} onChange={updateField} />
+
+                <label>Closing Date</label>
+                <input type="date" name="closing_date" value={editingJob.closing_date || ""} onChange={updateField} />
+
+                <label>ETD Date</label>
+                <input type="date" name="etd" value={editingJob.etd || ""} onChange={updateField} />
+
+                <label>ETA Date</label>
+                <input type="date" name="eta" value={editingJob.eta || ""} onChange={updateField} />
+              </>
+            )}
+
+            {/* Date Fields for IMPORT */}
+            {editingJob.jo_type === "IMPORT" && (
+              <>
+                <label>ETA Date</label>
+                <input type="date" name="eta" value={editingJob.eta || ""} onChange={updateField} />
+
+                <label>ETD Date</label>
+                <input type="date" name="etd" value={editingJob.etd || ""} onChange={updateField} />
+
+                <label>SPPB Date</label>
+                <input type="date" name="sppb_date" value={editingJob.sppb_date || ""} onChange={updateField} />
+
+                <label>Dooring Date</label>
+                <input type="date" name="dooring_date" value={editingJob.dooring_date || ""} onChange={updateField} />
+              </>
+            )}
+
             <label>Goods</label>
             <input type="text" name="goods" value={editingJob.goods || ""} onChange={updateField} />
+
             <label>Extra Note</label>
             <textarea name="extra_note" value={editingJob.extra_note || ""} onChange={updateField} />
           </div>
+
           <h3>Containers</h3>
           <div className="form-section">
             <div style={{ padding: "18px" }}>
@@ -632,16 +674,12 @@ const ListTodos = ({ type }) => {
               )}
             </div>
           </div>
+
           <button className="save-btn" onClick={updateJobOrder}>Save Changes</button>
           <button className="cancel-btn" onClick={() => setEditingJob(null)}>Cancel</button>
         </div>
       )}
     </div>
-
-    
-
-
-
   );
 };
 

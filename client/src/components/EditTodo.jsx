@@ -2,7 +2,6 @@ import { useState } from "react";
 import { API_BASE_URL } from '../config';
 
 const EditTodo = ({ job }) => {
-
   const [formData, setFormData] = useState({
     jo_number: job.jo_number || "",
     jo_type: job.jo_type || "",
@@ -11,7 +10,7 @@ const EditTodo = ({ job }) => {
     consignee_name: job.consignee_name || "",
     volume: job.volume || "",
     shipping_line: job.shipping_line || "",
-    vessel_name: job.vessel_name || "",  // Changed from voyage_name to vessel_name
+    vessel_name: job.vessel_name || "",
     port_of_loading: job.port_of_loading || "",
     port_of_discharge: job.port_of_discharge || "",
     person_in_charge: job.person_in_charge || "",
@@ -21,23 +20,13 @@ const EditTodo = ({ job }) => {
 
     goods: job.goods || "",
 
-    loading_date: job.loading_date
-      ? job.loading_date.split("T")[0]
-      : "",
-
-    closing_date: job.closing_date
-      ? job.closing_date.split("T")[0]
-      : "",
+    loading_date: job.loading_date ? job.loading_date.split("T")[0] : "",
+    closing_date: job.closing_date ? job.closing_date.split("T")[0] : "",
 
     aju_number: job.aju_number || "",
 
-    sppb_date: job.sppb_date
-      ? job.sppb_date.split("T")[0]
-      : "",
-
-    dooring_date: job.dooring_date
-      ? job.dooring_date.split("T")[0]
-      : "",
+    sppb_date: job.sppb_date ? job.sppb_date.split("T")[0] : "",
+    dooring_date: job.dooring_date ? job.dooring_date.split("T")[0] : "",
 
     extra_note: job.extra_note || "",
   });
@@ -51,20 +40,15 @@ const EditTodo = ({ job }) => {
 
   const updateJobOrder = async () => {
     try {
-
-      await fetch(
-        `${API_BASE_URL}/job_orders/${job.job_order_id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      await fetch(`${API_BASE_URL}/job_orders/${job.job_order_id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
       window.location.reload();
-
     } catch (error) {
       console.error(error.message);
     }
@@ -72,11 +56,9 @@ const EditTodo = ({ job }) => {
 
   return (
     <details>
-
       <summary>Edit</summary>
 
       <div className="edit-container">
-
         <input
           type="text"
           name="jo_number"
@@ -150,53 +132,11 @@ const EditTodo = ({ job }) => {
         />
 
         <input
-          type="date"
-          name="eta"
-          value={formData.eta}
-          onChange={onChange}
-        />
-
-        <input
-          type="date"
-          name="etd"
-          value={formData.etd}
-          onChange={onChange}
-        />
-
-        <input
-          type="date"
-          name="loading_date"
-          value={formData.loading_date}
-          onChange={onChange}
-        />
-
-        <input
-          type="date"
-          name="closing_date"
-          value={formData.closing_date}
-          onChange={onChange}
-        />
-
-        <input
           type="text"
           name="aju_number"
           value={formData.aju_number}
           onChange={onChange}
           placeholder="AJU Number"
-        />
-
-        <input
-          type="date"
-          name="sppb_date"
-          value={formData.sppb_date}
-          onChange={onChange}
-        />
-
-        <input
-          type="date"
-          name="dooring_date"
-          value={formData.dooring_date}
-          onChange={onChange}
         />
 
         <textarea
@@ -213,12 +153,76 @@ const EditTodo = ({ job }) => {
           placeholder="Extra Note"
         />
 
-        <button onClick={updateJobOrder}>
-          Save
-        </button>
+        {/* EXPORT & DOMESTIC DATE FIELDS - Reordered */}
+        {(formData.jo_type === "EXPORT" || formData.jo_type === "DOMESTIC") && (
+          <>
+            <input
+              type="date"
+              name="loading_date"
+              value={formData.loading_date}
+              onChange={onChange}
+              placeholder="Stuffing Date"
+            />
+            <input
+              type="date"
+              name="closing_date"
+              value={formData.closing_date}
+              onChange={onChange}
+              placeholder="Closing Date"
+            />
+            <input
+              type="date"
+              name="etd"
+              value={formData.etd}
+              onChange={onChange}
+              placeholder="ETD Date"
+            />
+            <input
+              type="date"
+              name="eta"
+              value={formData.eta}
+              onChange={onChange}
+              placeholder="ETA Date"
+            />
+          </>
+        )}
 
+        {/* IMPORT DATE FIELDS */}
+        {formData.jo_type === "IMPORT" && (
+          <>
+            <input
+              type="date"
+              name="eta"
+              value={formData.eta}
+              onChange={onChange}
+              placeholder="ETA Date"
+            />
+            <input
+              type="date"
+              name="etd"
+              value={formData.etd}
+              onChange={onChange}
+              placeholder="ETD Date"
+            />
+            <input
+              type="date"
+              name="sppb_date"
+              value={formData.sppb_date}
+              onChange={onChange}
+              placeholder="SPPB Date"
+            />
+            <input
+              type="date"
+              name="dooring_date"
+              value={formData.dooring_date}
+              onChange={onChange}
+              placeholder="Dooring Date"
+            />
+          </>
+        )}
+
+        <button onClick={updateJobOrder}>Save</button>
       </div>
-
     </details>
   );
 };
