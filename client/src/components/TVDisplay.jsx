@@ -118,6 +118,7 @@ const TVDisplay = ({ type }) => {
     if (type === "EXPORT" || type === "DOMESTIC") {
       return [
         { key: "shipper_name", label: "SHIPPER NAME" },
+        { key: "consignee_name", label: "CONSIGNEE NAME" },
         { key: "volume", label: "VOLUME" },
         { key: "port_of_discharge", label: "PORT OF DISCHARGE" },
         { key: "person_in_charge", label: "PERSON IN CHARGE" },
@@ -146,6 +147,7 @@ const TVDisplay = ({ type }) => {
     if (type === "EXPORT" || type === "DOMESTIC") {
       return [
         job.shipper_name || "-",
+        job.consignee_name || "-",
         job.volume || "-",
         job.port_of_discharge || "-",
         job.person_in_charge || "-",
