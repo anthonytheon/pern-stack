@@ -226,6 +226,7 @@ const ListTodos = ({ type }) => {
           <th onClick={() => handleSort("jo_number")}>JO Number {getSortIcon("jo_number")}</th>
           <th onClick={() => handleSort("loading_date")}>Stuffing Date {getSortIcon("loading_date")}</th>
           <th onClick={() => handleSort("shipper_name")}>Shipper Name {getSortIcon("shipper_name")}</th>
+          <th onClick={() => handleSort("consignee_name")}>Consignee Name {getSortIcon("consignee_name")}</th>
           <th onClick={() => handleSort("volume")}>Volume {getSortIcon("volume")}</th>
           <th onClick={() => handleSort("port_of_discharge")}>Port of Discharge {getSortIcon("port_of_discharge")}</th>
           <th onClick={() => handleSort("aju_number")}>AJU Number {getSortIcon("aju_number")}</th>
@@ -294,6 +295,7 @@ const ListTodos = ({ type }) => {
           <td>{job.jo_number}</td>
           <td>{formatDate(job.loading_date)}</td>
           <td>{job.shipper_name}</td>
+          <td>{job.consignee_name}</td>
           <td>{job.volume}</td>
           <td>{job.port_of_discharge}</td>
           <td>{job.aju_number}</td>
