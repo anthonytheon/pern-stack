@@ -10,13 +10,15 @@ const TVDisplay = ({ type }) => {
   const [jobOrders, setJobOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [isPlaying, setIsPlaying] = useState(true);
   const rowsPerPage = 15;
   
   // Sorting
   const [sortField, setSortField] = useState("loading_date");
   const [sortOrder, setSortOrder] = useState("ASC");
+  
+  // Search
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Fetch data
   const getJobOrders = async () => {
@@ -37,18 +39,34 @@ const TVDisplay = ({ type }) => {
 
   useEffect(() => {
     getJobOrders();
-    const timeInterval = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(timeInterval);
   }, [type]);
 
-  // Sort data
-  const getSortedData = () => {
-    const sorted = [...jobOrders];
+  // Filter and sort data
+  const getFilteredAndSortedData = () => {
+    let filtered = [...jobOrders];
+    
+    // Apply search filter
+    if (searchTerm.trim() !== "") {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(job => {
+        return (
+          (job.jo_number && job.jo_number.toLowerCase().includes(term)) ||
+          (job.shipper_name && job.shipper_name.toLowerCase().includes(term)) ||
+          (job.consignee_name && job.consignee_name.toLowerCase().includes(term)) ||
+          (job.aju_number && job.aju_number.toLowerCase().includes(term)) ||
+          (job.vessel_name && job.vessel_name.toLowerCase().includes(term)) ||
+          (job.shipping_line && job.shipping_line.toLowerCase().includes(term))
+        );
+      });
+    }
+    
+    // Sort the filtered data
+    const sorted = [...filtered];
     sorted.sort((a, b) => {
       let valA = a[sortField];
       let valB = b[sortField];
       
-      if (sortField === "eta" || sortField === "etd" || sortField === "loading_date" || sortField === "closing_date") {
+      if (sortField === "eta" || sortField === "etd" || sortField === "loading_date" || sortField === "closing_date" || sortField === "created_at") {
         valA = valA ? new Date(valA) : new Date(0);
         valB = valB ? new Date(valB) : new Date(0);
       } else {
@@ -63,7 +81,7 @@ const TVDisplay = ({ type }) => {
     return sorted;
   };
 
-  const sortedData = getSortedData();
+  const sortedData = getFilteredAndSortedData();
   const totalPages = Math.max(1, Math.ceil(sortedData.length / rowsPerPage));
   const startIndex = currentPage * rowsPerPage;
   const currentJobs = sortedData.slice(startIndex, startIndex + rowsPerPage);
@@ -117,6 +135,7 @@ const TVDisplay = ({ type }) => {
   const getHeaders = () => {
     if (type === "EXPORT" || type === "DOMESTIC") {
       return [
+        { key: "jo_number", label: "JO NUMBER" },
         { key: "shipper_name", label: "SHIPPER NAME" },
         { key: "consignee_name", label: "CONSIGNEE NAME" },
         { key: "volume", label: "VOLUME" },
@@ -126,7 +145,8 @@ const TVDisplay = ({ type }) => {
         { key: "etd", label: "ETD" },
         { key: "eta", label: "ETA" },
         { key: "vessel_name", label: "VESSEL" },
-        { key: "shipping_line", label: "SHIPPING LINE" }
+        { key: "shipping_line", label: "SHIPPING LINE" },
+        { key: "created_at", label: "CREATED AT" }
       ];
     }
     // IMPORT
@@ -138,13 +158,15 @@ const TVDisplay = ({ type }) => {
       { key: "port_of_loading", label: "PORT OF LOADING" },
       { key: "aju_number", label: "AJU" },
       { key: "shipping_line", label: "SHIPPING LINE" },
-      { key: "eta", label: "ETA SURABAYA" }
+      { key: "eta", label: "ETA SURABAYA" },
+      { key: "created_at", label: "CREATED AT" }
     ];
   };
 
   const getRowData = (job) => {
     if (type === "EXPORT" || type === "DOMESTIC") {
       return [
+        job.jo_number || "-",
         job.shipper_name || "-",
         job.consignee_name || "-",
         job.volume || "-",
@@ -154,7 +176,8 @@ const TVDisplay = ({ type }) => {
         formatDate(job.etd),
         formatDate(job.eta),
         job.vessel_name || "-",
-        job.shipping_line || "-"
+        job.shipping_line || "-",
+        formatDate(job.created_at)
       ];
     }
     // IMPORT
@@ -166,7 +189,8 @@ const TVDisplay = ({ type }) => {
       job.port_of_loading || "-",
       job.aju_number || "-",
       job.shipping_line || "-",
-      formatDate(job.eta)
+      formatDate(job.eta),
+      formatDate(job.created_at)
     ];
   };
 
@@ -181,23 +205,6 @@ const TVDisplay = ({ type }) => {
 
   return (
     <div className="tv-container">
-      {/* Header */}
-      <div className="tv-header">
-        <div className="tv-title">
-          <h1>GST JOB ORDER SYSTEM</h1>
-          <h2>{type} DASHBOARD</h2>
-        </div>
-        <div className="tv-datetime">
-          <div className="tv-time">{currentTime.toLocaleTimeString('en-GB')}</div>
-          <div className="tv-date">{currentTime.toLocaleDateString('en-GB', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          })}</div>
-        </div>
-      </div>
-
       {/* Controls */}
       <div className="tv-play-controls">
         <button onClick={goToPrevPage} className="tv-nav-btn">◀ PREV</button>
@@ -205,6 +212,22 @@ const TVDisplay = ({ type }) => {
           {isPlaying ? "⏸ PAUSE" : "▶ PLAY"}
         </button>
         <button onClick={goToNextPage} className="tv-nav-btn">NEXT ▶</button>
+      </div>
+
+      {/* Search Bar */}
+      <div className="tv-search-bar">
+        <input
+          type="text"
+          placeholder="🔍 Search by JO Number, Shipper, Consignee, Vessel, AJU..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="tv-search-input"
+        />
+        {searchTerm && (
+          <button className="tv-clear-search" onClick={() => setSearchTerm("")}>
+            ✕
+          </button>
+        )}
       </div>
 
       {/* Page Info */}

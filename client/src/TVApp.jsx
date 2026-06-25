@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import TVDisplay from "./components/TVDisplay";
+import './App.css';
 
 function TVApp() {
   const { type } = useParams();
@@ -14,37 +15,9 @@ function TVApp() {
     }
   }, [type]);
 
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyPress = (e) => {
-      if (e.key === '1') {
-        setCurrentType('EXPORT');
-        navigate('/tv/EXPORT');
-      }
-      if (e.key === '2') {
-        setCurrentType('IMPORT');
-        navigate('/tv/IMPORT');
-      }
-      if (e.key === '3') {
-        setCurrentType('DOMESTIC');
-        navigate('/tv/DOMESTIC');
-      }
-      if (e.key === 'f' || e.key === 'F') {
-        if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen();
-        } else {
-          document.exitFullscreen();
-        }
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [navigate]);
-
   return (
-    <div className="tv-app">  {/* Make sure this matches your CSS - tv-app or tv-mode? */}
-      {/* Hidden Admin Bar at bottom */}
+    <div className="tv-app">
+      {/* Admin Bar at bottom */}
       <div className="tv-admin-bar">
         <button 
           className={currentType === 'EXPORT' ? 'active' : ''}
