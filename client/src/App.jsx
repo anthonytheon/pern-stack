@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ListTodos from "./components/ListTodos";
-import NetworkBar from "./components/NetworkBar";
 import Login from "./components/Login";
 import DeletedJobs from "./components/DeletedJobs";
 import "./App.css";
@@ -34,7 +33,6 @@ function App() {
 
   return (
     <main>
-      <NetworkBar />
 
       <div className="app-header">
         <div>

@@ -66,7 +66,7 @@ const TVDisplay = ({ type }) => {
       let valA = a[sortField];
       let valB = b[sortField];
       
-      if (sortField === "eta" || sortField === "etd" || sortField === "loading_date" || sortField === "closing_date" || sortField === "created_at") {
+      if (sortField === "eta" || sortField === "etd" || sortField === "loading_date" || sortField === "closing_date") {
         valA = valA ? new Date(valA) : new Date(0);
         valB = valB ? new Date(valB) : new Date(0);
       } else {
@@ -146,7 +146,6 @@ const TVDisplay = ({ type }) => {
         { key: "eta", label: "ETA" },
         { key: "vessel_name", label: "VESSEL" },
         { key: "shipping_line", label: "SHIPPING LINE" },
-        { key: "created_at", label: "CREATED AT" }
       ];
     }
     // IMPORT
@@ -159,7 +158,6 @@ const TVDisplay = ({ type }) => {
       { key: "aju_number", label: "AJU" },
       { key: "shipping_line", label: "SHIPPING LINE" },
       { key: "eta", label: "ETA SURABAYA" },
-      { key: "created_at", label: "CREATED AT" }
     ];
   };
 
@@ -177,7 +175,6 @@ const TVDisplay = ({ type }) => {
         formatDate(job.eta),
         job.vessel_name || "-",
         job.shipping_line || "-",
-        formatDate(job.created_at)
       ];
     }
     // IMPORT
@@ -190,7 +187,6 @@ const TVDisplay = ({ type }) => {
       job.aju_number || "-",
       job.shipping_line || "-",
       formatDate(job.eta),
-      formatDate(job.created_at)
     ];
   };
 

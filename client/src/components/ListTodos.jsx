@@ -273,7 +273,6 @@ const ListTodos = ({ type }) => {
     return (
       <tr>
         <th onClick={() => handleSort("jo_number")}>JO Number {getSortIcon("jo_number")}</th>
-        <th onClick={() => handleSort("loading_date")}>Stuffing Date {getSortIcon("loading_date")}</th>
         <th onClick={() => handleSort("shipper_name")}>Shipper Name {getSortIcon("shipper_name")}</th>
         <th onClick={() => handleSort("consignee_name")}>Consignee Name {getSortIcon("consignee_name")}</th>
         <th onClick={() => handleSort("aju_number")}>AJU Number {getSortIcon("aju_number")}</th>
@@ -283,7 +282,6 @@ const ListTodos = ({ type }) => {
         <th onClick={() => handleSort("etd")}>ETD {getSortIcon("etd")}</th>
         <th onClick={() => handleSort("eta")}>ETA {getSortIcon("eta")}</th>
         <th onClick={() => handleSort("shipping_line")}>Shipping Line {getSortIcon("shipping_line")}</th>
-        <th onClick={() => handleSort("created_at")}>Created At {getSortIcon("created_at")}</th>
         <th>View Details</th>
       </tr>
     );
@@ -343,7 +341,6 @@ const ListTodos = ({ type }) => {
     return (
       <tr key={job.job_order_id}>
         <td>{job.jo_number}</td>
-        <td>{formatDate(job.loading_date)}</td>
         <td>{job.shipper_name}</td>
         <td>{job.consignee_name}</td>
         <td>{job.aju_number}</td>
@@ -353,7 +350,6 @@ const ListTodos = ({ type }) => {
         <td>{formatDate(job.etd)}</td>
         <td>{formatDate(job.eta)}</td>
         <td>{job.shipping_line || "-"}</td>
-        <td>{formatDate(job.created_at)}</td>
         <td><button className="view-btn" onClick={() => setViewingJob(job)}>View Details</button></td>
       </tr>
     );
