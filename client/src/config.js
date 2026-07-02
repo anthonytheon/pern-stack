@@ -1,3 +1,3 @@
 // src/config.js
 // Use your computer's IP address
-export const API_BASE_URL = 'http://192.168.100.127:5000';
+export const API_BASE_URL = 'http://192.168.100.67:5000';
