@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
 
 const ListTodos = ({ type }) => {
+  const navigate = useNavigate();
   const [jobOrders, setJobOrders] = useState([]);
-  const [editingJob, setEditingJob] = useState(null);
   const [viewingJob, setViewingJob] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [jobToDelete, setJobToDelete] = useState(null);
-
-  const [containerInput, setContainerInput] = useState("");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchField, setSearchField] = useState("all");
@@ -117,66 +116,6 @@ const ListTodos = ({ type }) => {
     setJobToDelete(null);
   };
 
-  const updateField = (e) => {
-    setEditingJob({ ...editingJob, [e.target.name]: e.target.value });
-  };
-
-  const getContainersArray = (containersStr) => {
-    if (!containersStr) return [];
-    if (Array.isArray(containersStr)) return containersStr;
-    return containersStr.split(", ").filter((c) => c && c.trim() !== "");
-  };
-
-  const addContainerToEdit = () => {
-    if (containerInput.trim() !== "") {
-      const currentContainers = getContainersArray(editingJob.containers);
-      setEditingJob({
-        ...editingJob,
-        containers: [...currentContainers, containerInput.trim()].join(", "),
-      });
-      setContainerInput("");
-    }
-  };
-
-  const removeContainerFromEdit = (containerToRemove) => {
-    const currentContainers = getContainersArray(editingJob.containers);
-    const newContainers = currentContainers.filter((c) => c !== containerToRemove);
-    setEditingJob({
-      ...editingJob,
-      containers: newContainers.join(", "),
-    });
-  };
-
-  const updateJobOrder = async () => {
-    try {
-      const token = sessionStorage.getItem("token");
-
-      const containersArray = getContainersArray(editingJob.containers);
-      const jobToUpdate = { ...editingJob, containers: containersArray };
-
-      const response = await fetch(`${API_BASE_URL}/job_orders/${editingJob.job_order_id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(jobToUpdate),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        alert(data.error || "Failed to update job order");
-        return;
-      }
-
-      setEditingJob(null);
-      getJobOrders();
-    } catch (error) {
-      console.error(error.message);
-      alert("Cannot connect to server");
-    }
-  };
-
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -273,6 +212,7 @@ const ListTodos = ({ type }) => {
     return (
       <tr>
         <th onClick={() => handleSort("jo_number")}>JO Number {getSortIcon("jo_number")}</th>
+        <th onClick={() => handleSort("loading_date")}>Stuffing Date {getSortIcon("loading_date")}</th>
         <th onClick={() => handleSort("shipper_name")}>Shipper Name {getSortIcon("shipper_name")}</th>
         <th onClick={() => handleSort("consignee_name")}>Consignee Name {getSortIcon("consignee_name")}</th>
         <th onClick={() => handleSort("aju_number")}>AJU Number {getSortIcon("aju_number")}</th>
@@ -341,6 +281,7 @@ const ListTodos = ({ type }) => {
     return (
       <tr key={job.job_order_id}>
         <td>{job.jo_number}</td>
+        <td>{formatDate(job.loading_date)}</td>
         <td>{job.shipper_name}</td>
         <td>{job.consignee_name}</td>
         <td>{job.aju_number}</td>
@@ -355,7 +296,7 @@ const ListTodos = ({ type }) => {
     );
   };
 
-  const JobDetails = ({ job, onClose, onEdit, onDelete }) => {
+  const JobDetails = ({ job, onClose }) => {
     return (
       <div className="modal-overlay" onClick={onClose}>
         <div className="details-modal" onClick={(e) => e.stopPropagation()}>
@@ -379,7 +320,6 @@ const ListTodos = ({ type }) => {
                 <div className="details-item"><label>Person In Charge:</label><span>{job.person_in_charge || "-"}</span></div>
                 <div className="details-item"><label>AJU Number:</label><span>{job.aju_number || "-"}</span></div>
                 <div className="details-item"><label>Goods:</label><span>{job.goods || "-"}</span></div>
-                <div className="details-item"><label>Created At:</label><span>{formatDate(job.created_at)}</span></div>
               </div>
             </div>
             <div className="details-section">
@@ -419,19 +359,23 @@ const ListTodos = ({ type }) => {
             </div>
           </div>
           <div className="details-buttons">
-            <button className="edit-details-btn" onClick={() => { onEdit(job); onClose(); }}>Edit</button>
-            <button className="delete-details-btn" onClick={() => { onDelete(job); onClose(); }}>Delete</button>
+            <button className="edit-details-btn" onClick={() => {
+              navigate(`/edit/${job.job_order_id}`);
+              onClose();
+            }}>
+              Edit
+            </button>
+            <button className="delete-details-btn" onClick={() => {
+              confirmDelete(job);
+              onClose();
+            }}>
+              Delete
+            </button>
             <button className="close-details-btn" onClick={onClose}>Close</button>
           </div>
         </div>
       </div>
     );
-  };
-
-  const getContainerList = () => {
-    if (!editingJob?.containers) return [];
-    if (Array.isArray(editingJob.containers)) return editingJob.containers;
-    return editingJob.containers.split(", ").filter((c) => c && c.trim() !== "");
   };
 
   const getPageNumbers = () => {
@@ -548,14 +492,6 @@ const ListTodos = ({ type }) => {
         <JobDetails
           job={viewingJob}
           onClose={() => setViewingJob(null)}
-          onEdit={(job) => {
-            setEditingJob(job);
-            setViewingJob(null);
-          }}
-          onDelete={(job) => {
-            confirmDelete(job);
-            setViewingJob(null);
-          }}
         />
       )}
 
@@ -576,107 +512,6 @@ const ListTodos = ({ type }) => {
               <button className="modal-delete-btn" onClick={handleDelete}>Delete</button>
             </div>
           </div>
-        </div>
-      )}
-
-      {editingJob && (
-        <div className="edit-form">
-          <h2>Edit Job Order</h2>
-          <div className="form-section">
-            <label>JO Number</label>
-            <input type="text" name="jo_number" value={editingJob.jo_number || ""} onChange={updateField} />
-
-            <label>Shipper Name</label>
-            <input type="text" name="shipper_name" value={editingJob.shipper_name || ""} onChange={updateField} />
-
-            <label>Consignee Name</label>
-            <input type="text" name="consignee_name" value={editingJob.consignee_name || ""} onChange={updateField} />
-
-            <label>Volume</label>
-            <input type="text" name="volume" value={editingJob.volume || ""} onChange={updateField} />
-
-            <label>Shipping Line</label>
-            <input type="text" name="shipping_line" value={editingJob.shipping_line || ""} onChange={updateField} />
-
-            <label>Vessel Name</label>
-            <input type="text" name="vessel_name" value={editingJob.vessel_name || ""} onChange={updateField} />
-
-            <label>Port of Loading</label>
-            <input type="text" name="port_of_loading" value={editingJob.port_of_loading || ""} onChange={updateField} />
-
-            <label>Port of Discharge</label>
-            <input type="text" name="port_of_discharge" value={editingJob.port_of_discharge || ""} onChange={updateField} />
-
-            <label>Person In Charge</label>
-            <input type="text" name="person_in_charge" value={editingJob.person_in_charge || ""} onChange={updateField} />
-
-            <label>AJU Number</label>
-            <input type="text" name="aju_number" value={editingJob.aju_number || ""} onChange={updateField} />
-
-            {/* Date Fields - Reordered for EXPORT/DOMESTIC */}
-            {(editingJob.jo_type === "EXPORT" || editingJob.jo_type === "DOMESTIC") && (
-              <>
-                <label>Stuffing Date</label>
-                <input type="date" name="loading_date" value={editingJob.loading_date || ""} onChange={updateField} />
-
-                <label>Closing Date</label>
-                <input type="date" name="closing_date" value={editingJob.closing_date || ""} onChange={updateField} />
-
-                <label>ETD Date</label>
-                <input type="date" name="etd" value={editingJob.etd || ""} onChange={updateField} />
-
-                <label>ETA Date</label>
-                <input type="date" name="eta" value={editingJob.eta || ""} onChange={updateField} />
-              </>
-            )}
-
-            {/* Date Fields for IMPORT */}
-            {editingJob.jo_type === "IMPORT" && (
-              <>
-                <label>ETA Date</label>
-                <input type="date" name="eta" value={editingJob.eta || ""} onChange={updateField} />
-
-                <label>ETD Date</label>
-                <input type="date" name="etd" value={editingJob.etd || ""} onChange={updateField} />
-
-                <label>SPPB Date</label>
-                <input type="date" name="sppb_date" value={editingJob.sppb_date || ""} onChange={updateField} />
-
-                <label>Dooring Date</label>
-                <input type="date" name="dooring_date" value={editingJob.dooring_date || ""} onChange={updateField} />
-              </>
-            )}
-
-            <label>Goods</label>
-            <input type="text" name="goods" value={editingJob.goods || ""} onChange={updateField} />
-
-            <label>Extra Note</label>
-            <textarea name="extra_note" value={editingJob.extra_note || ""} onChange={updateField} />
-          </div>
-
-          <h3>Containers</h3>
-          <div className="form-section">
-            <div style={{ padding: "18px" }}>
-              <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
-                <input type="text" placeholder="Enter Container Number" value={containerInput} onChange={(e) => setContainerInput(e.target.value)} style={{ flex: 1 }} />
-                <button type="button" onClick={addContainerToEdit} style={{ width: "auto" }}>Add</button>
-              </div>
-              {getContainerList().length > 0 && (
-                <div>
-                  <label>Current Containers:</label>
-                  {getContainerList().map((c, i) => (
-                    <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "8px", background: "#f5f5f5", marginBottom: "8px", borderRadius: "8px" }}>
-                      <span>{c}</span>
-                      <button type="button" onClick={() => removeContainerFromEdit(c)} style={{ width: "auto", background: "#ff385c" }}>Remove</button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <button className="save-btn" onClick={updateJobOrder}>Save Changes</button>
-          <button className="cancel-btn" onClick={() => setEditingJob(null)}>Cancel</button>
         </div>
       )}
     </div>

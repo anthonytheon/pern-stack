@@ -161,6 +161,7 @@ const CreateJobOrder = () => {
       )}
 
       <form onSubmit={onSubmitForm}>
+        {/* JO TYPE SELECTION */}
         <div className="form-section">
           <label>JO Type *</label>
           <select
@@ -177,248 +178,315 @@ const CreateJobOrder = () => {
 
         {joType && (
           <>
-            <h3>Common Information</h3>
-            <div className="form-section">
-              <label>JO Number (optional - auto-generated if empty)</label>
-              <input
-                type="text"
-                name="jo_number"
-                placeholder="Leave empty to auto-generate"
-                value={formData.jo_number}
-                onChange={onChange}
-              />
-
-              <label>Shipper Name</label>
-              <input
-                type="text"
-                name="shipper_name"
-                placeholder="Enter Shipper Name"
-                value={formData.shipper_name}
-                onChange={onChange}
-              />
-
-              <label>Consignee Name</label>
-              <input
-                type="text"
-                name="consignee_name"
-                placeholder="Enter Consignee Name"
-                value={formData.consignee_name}
-                onChange={onChange}
-              />
-
-              <label>Volume</label>
-              <input
-                type="text"
-                name="volume"
-                placeholder="e.g., 2x40, 1x20"
-                value={formData.volume}
-                onChange={onChange}
-              />
-
-              <label>Shipping Line</label>
-              <input
-                type="text"
-                name="shipping_line"
-                placeholder="e.g., MAERSK, MSC"
-                value={formData.shipping_line}
-                onChange={onChange}
-              />
-
-              <label>Vessel Name</label>
-              <input
-                type="text"
-                name="vessel_name"
-                placeholder="Enter Vessel Name"
-                value={formData.vessel_name}
-                onChange={onChange}
-              />
-
-              <label>Port of Loading</label>
-              <input
-                type="text"
-                name="port_of_loading"
-                placeholder="e.g., Surabaya, Jakarta"
-                value={formData.port_of_loading}
-                onChange={onChange}
-              />
-
-              <label>Port of Discharge</label>
-              <input
-                type="text"
-                name="port_of_discharge"
-                placeholder="e.g., Singapore, Bangkok"
-                value={formData.port_of_discharge}
-                onChange={onChange}
-              />
-
-              <label>Person In Charge</label>
-              <input
-                type="text"
-                name="person_in_charge"
-                placeholder="Name of PIC"
-                value={formData.person_in_charge}
-                onChange={onChange}
-              />
-
-              <label>AJU Number</label>
-              <input
-                type="text"
-                name="aju_number"
-                placeholder="Enter AJU Number"
-                value={formData.aju_number}
-                onChange={onChange}
-              />
-            </div>
-
-            <h3>Containers</h3>
-            <div className="form-section">
-              <div style={{ padding: "18px" }}>
-                <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+            {/* SECTION 1: Basic Information */}
+            <div className="form-section-container">
+              <h3 className="section-title">📋 Basic Information</h3>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>JO Number</label>
                   <input
                     type="text"
-                    placeholder="Enter Container Number (e.g., GESU1234567)"
-                    value={containerInput}
-                    onChange={(e) => setContainerInput(e.target.value)}
-                    style={{ flex: 1, border: "1px solid #ddd", borderRadius: "8px", padding: "10px" }}
+                    name="jo_number"
+                    placeholder="Leave empty to auto-generate"
+                    value={formData.jo_number}
+                    onChange={onChange}
                   />
-                  <button 
-                    type="button"
-                    onClick={addContainer}
-                    style={{ width: "auto", padding: "10px 20px", backgroundColor: "#222" }}
-                  >
-                    Add Container
-                  </button>
+                  <small className="helper-text">Optional - auto-generated if empty</small>
                 </div>
 
-                {formData.containers.length > 0 && (
-                  <div>
-                    <label style={{ display: "block", marginBottom: "10px", fontWeight: "600" }}>Added Containers:</label>
-                    {formData.containers.map((container, index) => (
-                      <div key={index} style={{ 
-                        display: "flex", 
-                        justifyContent: "space-between", 
-                        alignItems: "center",
-                        padding: "8px 12px",
-                        backgroundColor: "#f5f5f5",
-                        borderRadius: "8px",
-                        marginBottom: "8px"
-                      }}>
-                        <span>{container}</span>
-                        <button
-                          type="button"
-                          onClick={() => removeContainer(index)}
-                          style={{ 
-                            width: "auto", 
-                            padding: "4px 12px", 
-                            backgroundColor: "#ff385c",
-                            fontSize: "12px"
-                          }}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                <div className="form-group">
+                  <label>Shipper Name</label>
+                  <input
+                    type="text"
+                    name="shipper_name"
+                    placeholder="Enter Shipper Name"
+                    value={formData.shipper_name}
+                    onChange={onChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Consignee Name</label>
+                  <input
+                    type="text"
+                    name="consignee_name"
+                    placeholder="Enter Consignee Name"
+                    value={formData.consignee_name}
+                    onChange={onChange}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Volume</label>
+                  <input
+                    type="text"
+                    name="volume"
+                    placeholder="e.g., 2x40, 1x20"
+                    value={formData.volume}
+                    onChange={onChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Shipping Line</label>
+                  <input
+                    type="text"
+                    name="shipping_line"
+                    placeholder="e.g., MAERSK, MSC"
+                    value={formData.shipping_line}
+                    onChange={onChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Vessel Name</label>
+                  <input
+                    type="text"
+                    name="vessel_name"
+                    placeholder="Enter Vessel Name"
+                    value={formData.vessel_name}
+                    onChange={onChange}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Port of Loading</label>
+                  <input
+                    type="text"
+                    name="port_of_loading"
+                    placeholder="e.g., Surabaya, Jakarta"
+                    value={formData.port_of_loading}
+                    onChange={onChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Port of Discharge</label>
+                  <input
+                    type="text"
+                    name="port_of_discharge"
+                    placeholder="e.g., Singapore, Bangkok"
+                    value={formData.port_of_discharge}
+                    onChange={onChange}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Person In Charge</label>
+                  <input
+                    type="text"
+                    name="person_in_charge"
+                    placeholder="Name of PIC"
+                    value={formData.person_in_charge}
+                    onChange={onChange}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>AJU Number</label>
+                  <input
+                    type="text"
+                    name="aju_number"
+                    placeholder="Enter AJU Number"
+                    value={formData.aju_number}
+                    onChange={onChange}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* SECTION 2: Dates */}
+            <div className="form-section-container">
+              <h3 className="section-title">📅 Dates</h3>
+              <div className="form-row">
+                {(joType === "EXPORT" || joType === "DOMESTIC") && (
+                  <>
+                    <div className="form-group">
+                      <label>Stuffing Date</label>
+                      <input
+                        type="date"
+                        name="loading_date"
+                        value={formData.loading_date}
+                        onChange={onChange}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Closing Date</label>
+                      <input
+                        type="date"
+                        name="closing_date"
+                        value={formData.closing_date}
+                        onChange={onChange}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>ETD Date</label>
+                      <input
+                        type="date"
+                        name="etd"
+                        value={formData.etd}
+                        onChange={onChange}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>ETA Date</label>
+                      <input
+                        type="date"
+                        name="eta"
+                        value={formData.eta}
+                        onChange={onChange}
+                      />
+                    </div>
+                  </>
+                )}
+
+                {joType === "IMPORT" && (
+                  <>
+                    <div className="form-group">
+                      <label>ETA Date</label>
+                      <input
+                        type="date"
+                        name="eta"
+                        value={formData.eta}
+                        onChange={onChange}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>ETD Date</label>
+                      <input
+                        type="date"
+                        name="etd"
+                        value={formData.etd}
+                        onChange={onChange}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>SPPB Date</label>
+                      <input
+                        type="date"
+                        name="sppb_date"
+                        value={formData.sppb_date}
+                        onChange={onChange}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Dooring Date</label>
+                      <input
+                        type="date"
+                        name="dooring_date"
+                        value={formData.dooring_date}
+                        onChange={onChange}
+                      />
+                    </div>
+                  </>
                 )}
               </div>
             </div>
 
-            <h3>Dates</h3>
-            <div className="form-section">
-              {(joType === "EXPORT" || joType === "DOMESTIC") && (
-                <>
-                  <label>Stuffing Date</label>
-                  <input
-                    type="date"
-                    name="loading_date"
-                    value={formData.loading_date}
-                    onChange={onChange}
-                  />
+            {/* SECTION 3: Containers */}
+            <div className="form-section-container">
+              <h3 className="section-title">📦 Containers</h3>
+              <div className="form-row">
+                <div className="form-group" style={{ flex: 1 }}>
+                  <div style={{ display: "flex", gap: "10px", marginBottom: "15px" }}>
+                    <input
+                      type="text"
+                      placeholder="Enter Container Number (e.g., GESU1234567)"
+                      value={containerInput}
+                      onChange={(e) => setContainerInput(e.target.value)}
+                      style={{ flex: 1, border: "1px solid #ddd", borderRadius: "8px", padding: "10px" }}
+                    />
+                    <button 
+                      type="button"
+                      onClick={addContainer}
+                      style={{ width: "auto", padding: "10px 20px", backgroundColor: "#222" }}
+                    >
+                      Add Container
+                    </button>
+                  </div>
 
-                  <label>Closing Date</label>
-                  <input
-                    type="date"
-                    name="closing_date"
-                    value={formData.closing_date}
-                    onChange={onChange}
-                  />
-
-                  <label>ETD Date</label>
-                  <input
-                    type="date"
-                    name="etd"
-                    value={formData.etd}
-                    onChange={onChange}
-                  />
-
-                  <label>ETA Date</label>
-                  <input
-                    type="date"
-                    name="eta"
-                    value={formData.eta}
-                    onChange={onChange}
-                  />
-                </>
-              )}
-
-              {joType === "IMPORT" && (
-                <>
-                  <label>ETA Date</label>
-                  <input
-                    type="date"
-                    name="eta"
-                    value={formData.eta}
-                    onChange={onChange}
-                  />
-
-                  <label>ETD Date</label>
-                  <input
-                    type="date"
-                    name="etd"
-                    value={formData.etd}
-                    onChange={onChange}
-                  />
-
-                  <label>SPPB Date</label>
-                  <input
-                    type="date"
-                    name="sppb_date"
-                    value={formData.sppb_date}
-                    onChange={onChange}
-                  />
-
-                  <label>Dooring Date</label>
-                  <input
-                    type="date"
-                    name="dooring_date"
-                    value={formData.dooring_date}
-                    onChange={onChange}
-                  />
-                </>
-              )}
+                  {formData.containers.length > 0 && (
+                    <div>
+                      <label style={{ display: "block", marginBottom: "10px", fontWeight: "600" }}>Added Containers:</label>
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                        {formData.containers.map((container, index) => (
+                          <div key={index} style={{ 
+                            display: "flex", 
+                            alignItems: "center",
+                            gap: "8px",
+                            padding: "6px 12px",
+                            backgroundColor: "#f5f5f5",
+                            borderRadius: "8px",
+                            border: "1px solid #e0e0e0"
+                          }}>
+                            <span>{container}</span>
+                            <button
+                              type="button"
+                              onClick={() => removeContainer(index)}
+                              style={{ 
+                                width: "auto", 
+                                padding: "2px 10px", 
+                                backgroundColor: "#ff385c",
+                                fontSize: "12px",
+                                borderRadius: "6px"
+                              }}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
-            <h3>Additional Information</h3>
-            <div className="form-section">
-              <label>Goods / Commodity</label>
-              <input
-                type="text"
-                name="goods"
-                placeholder="Describe the goods"
-                value={formData.goods}
-                onChange={onChange}
-              />
+            {/* SECTION 4: Additional Information */}
+            <div className="form-section-container">
+              <h3 className="section-title">📝 Additional Information</h3>
+              <div className="form-row">
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Goods / Commodity</label>
+                  <input
+                    type="text"
+                    name="goods"
+                    placeholder="Describe the goods"
+                    value={formData.goods}
+                    onChange={onChange}
+                  />
+                </div>
+              </div>
 
-              <label>Extra Note</label>
-              <textarea
-                name="extra_note"
-                placeholder="Any additional notes..."
-                value={formData.extra_note}
-                onChange={onChange}
-              />
+              <div className="form-row">
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label>Extra Note</label>
+                  <textarea
+                    name="extra_note"
+                    placeholder="Any additional notes..."
+                    value={formData.extra_note}
+                    onChange={onChange}
+                    rows="3"
+                    style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #ddd", resize: "vertical" }}
+                  />
+                </div>
+              </div>
             </div>
 
-            <button type="submit">Create Job Order</button>
+            {/* Submit Button */}
+            <button type="submit" className="submit-btn">Create Job Order</button>
           </>
         )}
       </form>

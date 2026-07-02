@@ -1,5 +1,7 @@
 require("dotenv").config();
 
+process.env.TZ = 'Asia/Singapore';
+
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -18,6 +20,25 @@ app.use(cors({
 }));
 
 app.use(express.json());
+
+// =========================
+// HELPER FUNCTIONS
+// =========================
+
+const cleanDate = (value) => {
+  if (value === "" || !value) return null;
+  // Date will be parsed in Singapore timezone
+  return new Date(value);
+};
+
+const formatDateForResponse = (date) => {
+  if (!date) return null;
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 // =========================
 // AUTH MIDDLEWARE
@@ -136,8 +157,6 @@ app.post("/job_orders", authenticateUser, async (req, res) => {
       containers
     } = req.body;
 
-    const cleanDate = (value) => value === "" ? null : value;
-
     eta = cleanDate(eta);
     etd = cleanDate(etd);
     loading_date = cleanDate(loading_date);
@@ -214,7 +233,18 @@ app.post("/job_orders", authenticateUser, async (req, res) => {
       }
     }
 
-    res.json(createdJob);
+    // Format dates before sending response
+    const responseData = {
+      ...createdJob,
+      eta: formatDateForResponse(createdJob.eta),
+      etd: formatDateForResponse(createdJob.etd),
+      loading_date: formatDateForResponse(createdJob.loading_date),
+      closing_date: formatDateForResponse(createdJob.closing_date),
+      sppb_date: formatDateForResponse(createdJob.sppb_date),
+      dooring_date: formatDateForResponse(createdJob.dooring_date),
+    };
+
+    res.json(responseData);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: error.message });
@@ -346,7 +376,19 @@ app.get("/job_orders", async (req, res) => {
     query += ` ORDER BY jo.${validSort} ${validOrder}`;
 
     const allJobOrders = await pool.query(query, queryParams);
-    res.json(allJobOrders.rows);
+
+    // Format dates before sending
+    const formattedData = allJobOrders.rows.map(row => ({
+      ...row,
+      eta: formatDateForResponse(row.eta),
+      etd: formatDateForResponse(row.etd),
+      loading_date: formatDateForResponse(row.loading_date),
+      closing_date: formatDateForResponse(row.closing_date),
+      sppb_date: formatDateForResponse(row.sppb_date),
+      dooring_date: formatDateForResponse(row.dooring_date),
+    }));
+
+    res.json(formattedData);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: error.message });
@@ -422,8 +464,6 @@ app.put("/job_orders/:id", authenticateUser, async (req, res) => {
       extra_note,
       containers
     } = req.body;
-
-    const cleanDate = (value) => value === "" ? null : value;
 
     await pool.query(
       `
@@ -547,7 +587,17 @@ app.get("/job_orders/:id", async (req, res) => {
     if (result.rows.length === 0) {
       res.status(404).json({ error: "Job order not found" });
     } else {
-      res.json(result.rows[0]);
+      const row = result.rows[0];
+      const formattedRow = {
+        ...row,
+        eta: formatDateForResponse(row.eta),
+        etd: formatDateForResponse(row.etd),
+        loading_date: formatDateForResponse(row.loading_date),
+        closing_date: formatDateForResponse(row.closing_date),
+        sppb_date: formatDateForResponse(row.sppb_date),
+        dooring_date: formatDateForResponse(row.dooring_date),
+      };
+      res.json(formattedRow);
     }
   } catch (error) {
     console.error(error.message);

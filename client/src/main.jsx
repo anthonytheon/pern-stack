@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './App'
 import TVApp from './TVApp'
 import CreateJobOrder from './components/CreateJobOrder'
+import EditJobOrder from './components/EditJobOrder'
 import './App.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -12,6 +13,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/create" element={<CreateJobOrder />} />
+        <Route path="/edit/:id" element={<EditJobOrder />} />
         <Route path="/tv" element={<TVApp />} />
         <Route path="/tv/:type" element={<TVApp />} />
       </Routes>
