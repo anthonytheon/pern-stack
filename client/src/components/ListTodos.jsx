@@ -231,13 +231,13 @@ const ListTodos = ({ type }) => {
     if (type === "EXPORT") {
       return (
         <tr key={job.job_order_id}>
-          <td>{job.jo_number}</td>
+          <td className="wrap-cell" title={job.jo_number}>{job.jo_number}</td>
           <td>{formatDate(job.loading_date)}</td>
           <td>{job.shipper_name}</td>
           <td>{job.consignee_name}</td>
           <td>{job.volume}</td>
           <td>{job.port_of_discharge}</td>
-          <td>{job.aju_number}</td>
+          <td className="wrap-cell" title={job.aju_number}>{job.aju_number}</td>
           <td>{job.shipping_line || "-"}</td>
           <td><button className="view-btn" onClick={() => setViewingJob(job)}>View Details</button></td>
         </tr>
@@ -247,9 +247,9 @@ const ListTodos = ({ type }) => {
     if (type === "IMPORT") {
       return (
         <tr key={job.job_order_id}>
-          <td>{job.jo_number}</td>
+          <td className="wrap-cell" title={job.jo_number}>{job.jo_number}</td>
           <td>{job.consignee_name}</td>
-          <td>{job.aju_number}</td>
+          <td className="wrap-cell" title={job.aju_number}>{job.aju_number}</td>
           <td>{job.volume}</td>
           <td>{job.port_of_loading}</td>
           <td>{formatDate(job.etd)}</td>
@@ -265,7 +265,7 @@ const ListTodos = ({ type }) => {
     if (type === "DOMESTIC") {
       return (
         <tr key={job.job_order_id}>
-          <td>{job.jo_number}</td>
+          <td className="wrap-cell" title={job.jo_number}>{job.jo_number}</td>
           <td>{formatDate(job.loading_date)}</td>
           <td>{job.shipper_name}</td>
           <td>{job.consignee_name}</td>
@@ -280,11 +280,11 @@ const ListTodos = ({ type }) => {
     // ALL Dashboard
     return (
       <tr key={job.job_order_id}>
-        <td>{job.jo_number}</td>
+        <td className="wrap-cell" title={job.jo_number}>{job.jo_number}</td>
         <td>{formatDate(job.loading_date)}</td>
         <td>{job.shipper_name}</td>
         <td>{job.consignee_name}</td>
-        <td>{job.aju_number}</td>
+        <td className="wrap-cell" title={job.aju_number}>{job.aju_number}</td>
         <td>{job.volume}</td>
         <td>{job.port_of_loading}</td>
         <td>{job.port_of_discharge}</td>

@@ -216,7 +216,7 @@ button:hover {
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
   margin: 0 auto;
   font-size: 12px;  /* Smaller font */
-  table-layout: fixed;  /* Fixed layout for consistent columns */
+  table-layout: auto;  /* Fixed layout for consistent columns */
 }
 
 thead {
@@ -266,6 +266,11 @@ td {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.wrap-cell {
+  white-space: normal;
+  word-break: break-all;
 }
 
 tr:hover {
