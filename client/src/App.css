@@ -1675,7 +1675,7 @@ tr:hover {
   color: #00a8ff;
   border-bottom: 2px solid rgba(0, 168, 255, 0.3);
   text-transform: uppercase;
-  background: rgba(0, 168, 255, 0.05);
+  background: #0f1422;   /* solid color, matches your dark theme */
   cursor: pointer;
   user-select: none;
   transition: background 0.2s;

@@ -159,6 +159,22 @@ const ListTodos = ({ type }) => {
   };
 
   const renderHeaders = () => {
+    if (type === "FREIGHT") {
+      return (
+        <tr>
+          <th onClick={() => handleSort("jo_number")}>JO Number {getSortIcon("jo_number")}</th>
+          <th onClick={() => handleSort("loading_date")}>Stuffing Date {getSortIcon("loading_date")}</th>
+          <th onClick={() => handleSort("shipper_name")}>Shipper Name {getSortIcon("shipper_name")}</th>
+          <th onClick={() => handleSort("consignee_name")}>Consignee Name {getSortIcon("consignee_name")}</th>
+          <th onClick={() => handleSort("volume")}>Volume {getSortIcon("volume")}</th>
+          <th onClick={() => handleSort("port_of_discharge")}>Port of Discharge {getSortIcon("port_of_discharge")}</th>
+          <th onClick={() => handleSort("aju_number")}>AJU Number {getSortIcon("aju_number")}</th>
+          <th onClick={() => handleSort("shipping_line")}>Shipping Line {getSortIcon("shipping_line")}</th>
+          <th>View Details</th>
+        </tr>
+      );
+    }
+
     if (type === "EXPORT") {
       return (
         <tr>
@@ -208,6 +224,22 @@ const ListTodos = ({ type }) => {
       );
     }
 
+    if (type === "OTHER") {
+      return (
+        <tr>
+          <th onClick={() => handleSort("jo_number")}>JO Number {getSortIcon("jo_number")}</th>
+          <th onClick={() => handleSort("loading_date")}>Stuffing Date {getSortIcon("loading_date")}</th>
+          <th onClick={() => handleSort("shipper_name")}>Shipper Name {getSortIcon("shipper_name")}</th>
+          <th onClick={() => handleSort("consignee_name")}>Consignee Name {getSortIcon("consignee_name")}</th>
+          <th onClick={() => handleSort("volume")}>Volume {getSortIcon("volume")}</th>
+          <th onClick={() => handleSort("port_of_discharge")}>Port of Discharge {getSortIcon("port_of_discharge")}</th>
+          <th onClick={() => handleSort("aju_number")}>AJU Number {getSortIcon("aju_number")}</th>
+          <th onClick={() => handleSort("shipping_line")}>Shipping Line {getSortIcon("shipping_line")}</th>
+          <th>View Details</th>
+        </tr>
+      );
+    }
+
     // ALL Dashboard
     return (
       <tr>
@@ -228,6 +260,21 @@ const ListTodos = ({ type }) => {
   };
 
   const renderRowData = (job) => {
+    if (type === "FREIGHT") {
+      return (
+        <tr key={job.job_order_id}>
+          <td className="wrap-cell" title={job.jo_number}>{job.jo_number}</td>
+          <td>{formatDate(job.loading_date)}</td>
+          <td>{job.shipper_name}</td>
+          <td>{job.consignee_name}</td>
+          <td>{job.volume}</td>
+          <td>{job.port_of_discharge}</td>
+          <td className="wrap-cell" title={job.aju_number}>{job.aju_number}</td>
+          <td>{job.shipping_line || "-"}</td>
+          <td><button className="view-btn" onClick={() => setViewingJob(job)}>View Details</button></td>
+        </tr>
+      );
+    }
     if (type === "EXPORT") {
       return (
         <tr key={job.job_order_id}>
@@ -271,6 +318,22 @@ const ListTodos = ({ type }) => {
           <td>{job.consignee_name}</td>
           <td>{job.volume}</td>
           <td>{job.port_of_loading}</td>
+          <td>{job.shipping_line || "-"}</td>
+          <td><button className="view-btn" onClick={() => setViewingJob(job)}>View Details</button></td>
+        </tr>
+      );
+    }
+
+    if (type === "OTHER") {
+      return (
+        <tr key={job.job_order_id}>
+          <td className="wrap-cell" title={job.jo_number}>{job.jo_number}</td>
+          <td>{formatDate(job.loading_date)}</td>
+          <td>{job.shipper_name}</td>
+          <td>{job.consignee_name}</td>
+          <td>{job.volume}</td>
+          <td>{job.port_of_discharge}</td>
+          <td className="wrap-cell" title={job.aju_number}>{job.aju_number}</td>
           <td>{job.shipping_line || "-"}</td>
           <td><button className="view-btn" onClick={() => setViewingJob(job)}>View Details</button></td>
         </tr>
@@ -325,7 +388,7 @@ const ListTodos = ({ type }) => {
             <div className="details-section">
               <h3>Dates</h3>
               <div className="details-grid">
-                {(job.jo_type === "EXPORT" || job.jo_type === "DOMESTIC") && (
+                {(job.jo_type === "EXPORT" || job.jo_type === "DOMESTIC" || job.jo_type === "FREIGHT" || job.jo_type === "OTHER") && (
                   <>
                     <div className="details-item"><label>Stuffing Date:</label><span>{formatDateFull(job.loading_date)}</span></div>
                     <div className="details-item"><label>Closing Date:</label><span>{formatDateFull(job.closing_date)}</span></div>

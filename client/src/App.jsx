@@ -53,6 +53,9 @@ function App() {
             <li className={currentView === "ALL" ? "active" : ""} onClick={() => setCurrentView("ALL")}>
               ALL Dashboard
             </li>
+            <li className={currentView === "FREIGHT" ? "active" : ""} onClick={() => setCurrentView("FREIGHT")}>
+              Freight
+            </li>
             <li className={currentView === "EXPORT" ? "active" : ""} onClick={() => setCurrentView("EXPORT")}>
               Export
             </li>
@@ -61,6 +64,9 @@ function App() {
             </li>
             <li className={currentView === "DOMESTIC" ? "active" : ""} onClick={() => setCurrentView("DOMESTIC")}>
               Domestic
+            </li>
+            <li className={currentView === "OTHER" ? "active" : ""} onClick={() => setCurrentView("OTHER")}>
+              Other
             </li>
             {user.role === "admin" && (
               <li className={currentView === "DELETED" ? "active" : ""} onClick={() => setCurrentView("DELETED")}>

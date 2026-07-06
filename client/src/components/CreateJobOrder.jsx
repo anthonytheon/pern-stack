@@ -170,9 +170,11 @@ const CreateJobOrder = () => {
             required
           >
             <option value="">Select JO Type</option>
+            <option value="FREIGHT">FREIGHT</option>
             <option value="EXPORT">EXPORT</option>
             <option value="IMPORT">IMPORT</option>
             <option value="DOMESTIC">DOMESTIC</option>
+            <option value="OTHER">OTHER</option>
           </select>
         </div>
 
@@ -305,7 +307,7 @@ const CreateJobOrder = () => {
             <div className="form-section-container">
               <h3 className="section-title">📅 Dates</h3>
               <div className="form-row">
-                {(joType === "EXPORT" || joType === "DOMESTIC") && (
+                {(joType === "EXPORT" || joType === "DOMESTIC" || joType === "FREIGHT" || joType === "OTHER") && (
                   <>
                     <div className="form-group">
                       <label>Stuffing Date</label>
