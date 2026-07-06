@@ -20,13 +20,22 @@ function TVApp() {
       {/* Admin Bar at bottom */}
       <div className="tv-admin-bar">
         <button 
+          className={currentType === 'FREIGHT' ? 'active' : ''}
+          onClick={() => {
+            setCurrentType('FREIGHT');
+            navigate('/tv/FREIGHT');
+          }}
+        >
+          🚢 FREIGHT
+        </button>
+        <button 
           className={currentType === 'EXPORT' ? 'active' : ''}
           onClick={() => {
             setCurrentType('EXPORT');
             navigate('/tv/EXPORT');
           }}
         >
-          🚢 EXPORT
+          ⚙️ EXPORT
         </button>
         <button 
           className={currentType === 'IMPORT' ? 'active' : ''}
@@ -46,6 +55,17 @@ function TVApp() {
         >
           🏠 DOMESTIC
         </button>
+
+        <button 
+          className={currentType === 'OTHER' ? 'active' : ''}
+          onClick={() => {
+            setCurrentType('OTHER');
+            navigate('/tv/OTHER');
+          }}
+        >
+        🗂️ OTHER
+        </button>
+        
         <button onClick={() => {
           if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen();
