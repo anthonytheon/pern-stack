@@ -266,6 +266,7 @@ td {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-transform: uppercase;
 }
 
 .wrap-cell {
@@ -890,6 +891,7 @@ tr:hover {
   font-weight: 450;
   color: #222222;
   word-break: break-word;
+  text-transform: uppercase;
 }
 
 /* Full width items */
@@ -1695,6 +1697,8 @@ tr:hover {
   font-weight: 500;
   color: rgba(255, 255, 255, 0.9);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  text-transform: uppercase;
+  
 }
 
 .tv-table tr:nth-child(even) {

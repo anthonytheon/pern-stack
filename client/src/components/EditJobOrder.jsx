@@ -150,17 +150,19 @@ const EditJobOrder = () => {
       )}
 
       <form onSubmit={onSubmitForm}>
-        {/* JO TYPE SELECTION - Read only */}
+        {/* JO TYPE SELECTION - Now editable */}
         <div className="form-section">
           <label>JO Type</label>
           <select
+            name="jo_type"
             value={formData.jo_type}
-            disabled
-            style={{ backgroundColor: "#f5f5f5", cursor: "not-allowed" }}
+            onChange={onChange}
           >
+            <option value="FREIGHT">FREIGHT</option>
             <option value="EXPORT">EXPORT</option>
             <option value="IMPORT">IMPORT</option>
             <option value="DOMESTIC">DOMESTIC</option>
+            <option value="OTHERS">OTHERS</option>
           </select>
         </div>
 
@@ -292,7 +294,7 @@ const EditJobOrder = () => {
             <div className="form-section-container">
               <h3 className="section-title">📅 Dates</h3>
               <div className="form-row">
-                {(formData.jo_type === "EXPORT" || formData.jo_type === "DOMESTIC") && (
+                {(formData.jo_type === "EXPORT" || formData.jo_type === "DOMESTIC" || formData.jo_type === "FREIGHT" || formData.jo_type === "OTHERS") && (
                   <>
                     <div className="form-group">
                       <label>Stuffing Date</label>
@@ -336,7 +338,7 @@ const EditJobOrder = () => {
                   </>
                 )}
 
-                {formData.jo_type === "IMPORT" && (
+                {(formData.jo_type === "IMPORT") && (
                   <>
                     <div className="form-group">
                       <label>ETA Date</label>

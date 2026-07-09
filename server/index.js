@@ -373,7 +373,7 @@ app.get("/job_orders", async (req, res) => {
     const validSort = validSortFields.includes(sort) ? sort : "eta";
     const validOrder = order.toUpperCase() === "DESC" ? "DESC" : "ASC";
 
-    query += ` ORDER BY jo.${validSort} ${validOrder}`;
+    query += ` ORDER BY jo.${validSort} ${validOrder} NULLS LAST`;
 
     const allJobOrders = await pool.query(query, queryParams);
 
