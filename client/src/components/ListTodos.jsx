@@ -317,7 +317,7 @@ const ListTodos = ({ type }) => {
           <td>{job.shipper_name}</td>
           <td>{job.consignee_name}</td>
           <td>{job.volume}</td>
-          <td>{job.port_of_loading}</td>
+          <td>{job.port_of_discharge}</td>
           <td>{job.shipping_line || "-"}</td>
           <td><button className="view-btn" onClick={() => setViewingJob(job)}>View Details</button></td>
         </tr>
