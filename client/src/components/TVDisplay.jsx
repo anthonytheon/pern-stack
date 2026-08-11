@@ -133,7 +133,7 @@ const TVDisplay = ({ type }) => {
 
   // Headers based on type
   const getHeaders = () => {
-    if (type === "EXPORT" || type === "DOMESTIC") {
+    if (type === "EXPORT" || type === "DOMESTIC" || type === "FREIGHT" || type === "OTHER") {
       return [
         { key: "jo_number", label: "JO NUMBER" },
         { key: "shipper_name", label: "SHIPPER NAME" },
@@ -162,7 +162,7 @@ const TVDisplay = ({ type }) => {
   };
 
   const getRowData = (job) => {
-    if (type === "EXPORT" || type === "DOMESTIC") {
+    if (type === "EXPORT" || type === "DOMESTIC" || type === "FREIGHT" || type === "OTHER") {
       return [
         job.jo_number || "-",
         job.shipper_name || "-",
